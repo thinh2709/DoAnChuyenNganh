@@ -28,11 +28,11 @@ import Statistics from "./pages/Statistics/Statistics";
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-  
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -239,7 +239,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         {/* Catch all - redirect to dashboard */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

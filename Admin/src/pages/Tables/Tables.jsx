@@ -81,6 +81,7 @@ const Tables = () => {
       editForm.setFieldsValue({
         tenBan: selectedTable.TenBan || selectedTable.tenBan,
         sucChua: selectedTable.SucChua || selectedTable.sucChua,
+        trangThai: selectedTable.TrangThai || selectedTable.trangThai || 'TRONG', // ✅ Set initial status
       });
     }
   }, [showEditModal, selectedTable, editForm]);
@@ -112,6 +113,7 @@ const Tables = () => {
       await api.put(`/tables/${selectedTable.MaBan || selectedTable.maBan}`, {
         TenBan: values.tenBan,
         SucChua: parseInt(values.sucChua),
+        TrangThai: values.trangThai, // ✅ Send status update
       });
       toast.success("Cập nhật bàn thành công");
       fetchTables();
@@ -168,18 +170,43 @@ const Tables = () => {
       (booking) =>
         (booking.MaBan || booking.maBan) === tableId &&
         new Date(booking.ThoiGianBatDau || booking.thoiGianBatDau) <=
-          currentTime &&
+        currentTime &&
         new Date(booking.ThoiGianKetThuc || booking.thoiGianKetThuc) >=
-          currentTime
+        currentTime
     );
   };
 
   const getTableStatus = (table) => {
+    // Ưu tiên trạng thái từ DB nếu là Bảo trì
+    const dbStatus = table.TrangThai || table.trangThai;
+    if (dbStatus === 'BAO_TRI') {
+      return {
+        isBooked: false,
+        status: "Bảo trì",
+        color: "default",
+      };
+    }
+
+    // Nếu có booking, vẫn hiển thị Đã đặt
     const booked = isTableBooked(table.MaBan || table.maBan);
+    if (booked) {
+      return {
+        isBooked: true,
+        status: "Đã đặt",
+        color: "red",
+      };
+    }
+
+    // Map các trạng thái từ DB (chỉ 3 trạng thái)
+    const statusMap = {
+      'TRONG': { text: "Trống", color: "green" },
+      'DAT_TRUOC': { text: "Đã Đặt", color: "orange" },
+    };
+
     return {
-      isBooked: booked,
-      status: booked ? "Đã đặt" : "Trống",
-      color: booked ? "red" : "green",
+      isBooked: false,
+      status: statusMap[dbStatus]?.text || "Trống",
+      color: statusMap[dbStatus]?.color || "green",
     };
   };
 
@@ -225,17 +252,7 @@ const Tables = () => {
           const status = getTableStatus(record);
           return (
             <Space>
-              {!status.isBooked && (
-                <Button
-                  icon={<FiClock />}
-                  onClick={() => {
-                    setSelectedTable(record);
-                    setShowBookingModal(true);
-                  }}
-                >
-                  Đặt bàn
-                </Button>
-              )}
+
               <Button
                 icon={<FiEdit2 />}
                 onClick={() => {
@@ -373,6 +390,18 @@ const Tables = () => {
             />
           </Form.Item>
 
+          <Form.Item
+            label="Trạng thái"
+            name="trangThai"
+            rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+          >
+            <Select>
+              <Select.Option value="TRONG">Trống</Select.Option>
+              <Select.Option value="DAT_TRUOC">Đã Đặt</Select.Option>
+              <Select.Option value="BAO_TRI">Bảo trì</Select.Option>
+            </Select>
+          </Form.Item>
+
           <div className="modal-actions">
             <Button onClick={() => setShowEditModal(false)}>Hủy</Button>
             <Button type="primary" htmlType="submit">
@@ -471,9 +500,8 @@ const Tables = () => {
                 type: "number",
                 min: 1,
                 max: selectedTable?.SucChua || selectedTable?.sucChua || 999,
-                message: `Số người phải từ 1 đến ${
-                  selectedTable?.SucChua || selectedTable?.sucChua || 999
-                }`,
+                message: `Số người phải từ 1 đến ${selectedTable?.SucChua || selectedTable?.sucChua || 999
+                  }`,
               },
             ]}
           >

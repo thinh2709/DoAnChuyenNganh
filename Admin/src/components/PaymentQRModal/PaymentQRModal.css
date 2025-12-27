@@ -1,0 +1,250 @@
+/* Payment QR Modal Styles */
+
+.payment-qr-modal .ant-modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.payment-qr-modal .ant-modal-body {
+  padding: 0;
+}
+
+.qr-modal-container {
+  padding: 32px;
+}
+
+/* Header */
+.qr-modal-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.qr-modal-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1890ff;
+  margin: 0 0 8px 0;
+}
+
+.qr-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* QR Code Section */
+.qr-code-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+  min-height: 300px;
+  align-items: center;
+}
+
+.qr-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.qr-code-wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.qr-code-image {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Bank Information */
+.bank-info-section {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.bank-info-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.bank-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bank-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.bank-info-row:last-child {
+  border-bottom: none;
+}
+
+.bank-info-row.transfer-content {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.info-icon {
+  font-size: 18px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #333;
+}
+
+.info-value.amount {
+  font-size: 18px;
+  color: #52c41a;
+  font-weight: 700;
+}
+
+.transfer-code-box {
+  background: #fff7e6;
+  border: 1px solid #ffe58f;
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.transfer-code {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d46b08;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Warning Box */
+.qr-warning-box {
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.warning-content {
+  flex: 1;
+}
+
+.warning-title {
+  display: block;
+  color: #d46b08;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.warning-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #d46b08;
+}
+
+.warning-list li {
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.warning-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Action Buttons */
+.qr-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.qr-modal-actions button {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .qr-modal-container {
+    padding: 20px;
+  }
+
+  .qr-code-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .bank-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .qr-modal-actions {
+    flex-direction: column;
+  }
+
+  .qr-modal-actions button {
+    width: 100%;
+  }
+}

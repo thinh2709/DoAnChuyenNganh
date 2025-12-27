@@ -4,12 +4,16 @@ import { assets } from "../../assets/assets";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { StoreContext } from "../../Context/StoreContext";
 import LoginPopup from "../LoginPopup/LoginPopup";
+import { FiShoppingBag, FiMenu, FiX } from "react-icons/fi"; // ✅ NEW: Import icons
 
 const Navbar = () => {
   const [menu, setMenu] = useState("Home");
   const [isFixed, setIsFixed] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // ✅ NEW: State for mobile menu
+  
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,21 +49,48 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleScroll = (elementId) => {
+  const handleGoHome = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+    setMenu("Home");
+    setMobileMenuOpen(false); // Close mobile menu
+  };
+
+  const handleScrollToSection = (sectionId, menuName) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        scrollToElement(sectionId);
+      }, 100);
+    } else {
+      scrollToElement(sectionId);
+    }
+    setMenu(menuName);
+    setMobileMenuOpen(false); // Close mobile menu
+  };
+
+  const scrollToElement = (elementId) => {
     const element = document.getElementById(elementId);
     if (element) {
       const navbarHeight = 80;
       const elementPosition =
         element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+
       window.scrollTo({
-        top: elementPosition - navbarHeight,
+        top: offsetPosition,
         behavior: "smooth",
       });
     }
   };
 
   useEffect(() => {
-    // Update active menu based on current route
     const path = location.pathname;
     if (path === "/") setMenu("Home");
     else if (path === "/menu") setMenu("Menu");
@@ -70,6 +101,7 @@ const Navbar = () => {
     logout();
     setShowDropdown(false);
     navigate("/");
+    setMobileMenuOpen(false);
   };
 
   const handleCartClick = () => {
@@ -78,62 +110,149 @@ const Navbar = () => {
     } else {
       navigate("/order");
     }
+    setMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
     <>
       {showLogin && <LoginPopup setShowLogin={setShowLogin} />}
-      <div className={`navbar ${isFixed ? "navbar-fixed" : ""}`}>
-        <Link to="/">
-          <img src={assets.logo} alt="Logo" className="logo" />
-        </Link>
+      <div className={`navbar ${isScrolled ? "navbar-scrolled" : ""}`}>
+        {/* Hamburger Icon for Mobile */}
+        <div className="navbar-mobile-toggle" onClick={toggleMobileMenu}>
+          {mobileMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+        </div>
+
+        <img
+          src={assets.logo}
+          alt="Logo"
+          className="logo"
+          onClick={handleGoHome}
+          style={{ cursor: "pointer" }}
+        />
+
+        {/* Desktop Menu */}
         <ul className="navbar-menu">
-          <Link to="/">
+          <li
+            onClick={handleGoHome}
+            className={menu === "Home" ? "active" : ""}
+          >
+            Trang chủ
+          </li>
+          <li
+            onClick={() => handleScrollToSection("about-us", "About")}
+            className={menu === "About" ? "active" : ""}
+          >
+            Về chúng tôi
+          </li>
+          <li
+            onClick={() => handleScrollToSection("section-menu", "Menu")}
+            className={menu === "Menu" ? "active" : ""}
+          >
+            Thực đơn
+          </li>
+          <li
+            onClick={() =>
+              handleScrollToSection("section-booking", "Reservation")
+            }
+            className={menu === "Reservation" ? "active" : ""}
+          >
+            Đặt bàn
+          </li>
+        </ul>
+
+        {/* Mobile Menu Overlay */}
+        <div className={`mobile-menu-overlay ${mobileMenuOpen ? "open" : ""}`} onClick={() => setMobileMenuOpen(false)}></div>
+
+        {/* Mobile Menu Sidebar */}
+        <div className={`mobile-menu-sidebar ${mobileMenuOpen ? "open" : ""}`}>
+          <div className="mobile-menu-header">
+            <img src={assets.logo} alt="Logo" className="mobile-logo" />
+            <div className="close-btn" onClick={() => setMobileMenuOpen(false)}>
+              <FiX size={24} />
+            </div>
+          </div>
+          <ul className="mobile-menu-list">
             <li
-              onClick={() => setMenu("Home")}
+              onClick={handleGoHome}
               className={menu === "Home" ? "active" : ""}
             >
               Trang chủ
             </li>
-          </Link>
-          <Link to="/menu">
             <li
-              onClick={() => setMenu("Menu")}
+              onClick={() => handleScrollToSection("about-us", "About")}
+              className={menu === "About" ? "active" : ""}
+            >
+              Về chúng tôi
+            </li>
+            <li
+              onClick={() => handleScrollToSection("section-menu", "Menu")}
               className={menu === "Menu" ? "active" : ""}
             >
               Thực đơn
             </li>
-          </Link>
-          <Link to="/reservation">
             <li
-              onClick={() => setMenu("Reservation")}
+              onClick={() =>
+                handleScrollToSection("section-booking", "Reservation")
+              }
               className={menu === "Reservation" ? "active" : ""}
             >
               Đặt bàn
             </li>
-          </Link>
-        </ul>
+          </ul>
+        </div>
+
         <div className="navbar-right">
           <div className="navbar-cart" onClick={handleCartClick}>
             <img src={assets.basket_icon} alt="Cart" />
             {cartItems.length > 0 && (
               <div className="cart-count">{cartItems.length}</div>
             )}
-            {totalAmount > 0 && (
-              <div className="cart-total">{totalAmount.toLocaleString("vi-VN")} VNĐ</div>
-            )}
           </div>
+
           {token ? (
             <div className="navbar-user" ref={dropdownRef}>
               <div
-                className="user-info"
+                className="user-avatar"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <span>{user?.HoTen || "User"}</span>
                 <img src={assets.profile_icon} alt="Profile" />
+                <span className="user-name-short">
+                  {user?.HoTen?.charAt(0) || "U"}
+                </span>
               </div>
               {showDropdown && (
                 <div className="user-dropdown">
+                  <div className="dropdown-header">
+                    <strong>{user?.HoTen || "User"}</strong>
+                    <span>{user?.Email}</span>
+                  </div>
+                  <div className="dropdown-divider"></div>
+
+                  <div
+                    className="dropdown-item"
+                    onClick={() => {
+                      setShowDropdown(false);
+                      navigate("/myorders");
+                    }}
+                  >
+                    <FiShoppingBag size={20} />
+                    <span>Lịch sử mua hàng</span>
+                  </div>
+
                   <div className="dropdown-item" onClick={handleLogout}>
                     <img src={assets.logout_icon} alt="Logout" />
                     <span>Đăng xuất</span>
@@ -142,8 +261,12 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <button className="login-btn" onClick={() => setShowLogin(true)}>
-              Đăng nhập
+            <button
+              className="login-btn-outline"
+              onClick={() => setShowLogin(true)}
+            >
+              <img src={assets.profile_icon} alt="Login" />
+              <span>Đăng nhập</span>
             </button>
           )}
         </div>

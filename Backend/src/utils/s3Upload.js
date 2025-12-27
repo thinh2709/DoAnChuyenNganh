@@ -14,7 +14,7 @@ const s3 = new AWS.S3({
   region: process.env.AWS_REGION || "ap-southeast-1", // Singapore region
 });
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || "techzy-restaurant-images";
+const BUCKET_NAME = process.env.AWS_BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME || "techzy-restaurant-images";
 
 /**
  * Upload file lên S3
@@ -30,7 +30,6 @@ const uploadToS3 = async (fileBuffer, fileName, mimetype) => {
       Key: `images/${fileName}`, // Lưu trong thư mục images
       Body: fileBuffer,
       ContentType: mimetype,
-      ACL: "public-read", // Cho phép public read
     };
 
     const result = await s3.upload(params).promise();

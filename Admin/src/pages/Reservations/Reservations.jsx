@@ -13,12 +13,28 @@ import {
   Space,
   Typography,
   Tag,
+  Empty,
 } from "antd";
 import { FiEdit2, FiTrash2, FiPlus, FiEye } from "react-icons/fi";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 
 const { Text } = Typography;
+
+// ✅ Helper: Validate giờ (Client Side)
+const validateReservationTime = (startValue) => {
+  if (!startValue) return Promise.resolve();
+
+  const start = new Date(startValue);
+  const now = new Date();
+
+  // Chỉ cấm đặt trong quá khứ
+  if (start < now) {
+    return Promise.reject("Không thể đặt bàn trong quá khứ");
+  }
+
+  return Promise.resolve();
+};
 
 const Reservations = () => {
   const [reservations, setReservations] = useState([]);
@@ -45,11 +61,13 @@ const Reservations = () => {
   const fetchReservationFoods = async (maDatBan) => {
     try {
       const response = await api.get(`/reservations/${maDatBan}/monan`);
-      setSelectedFoods(response.data.data || []);
+      const foods = response.data.data || [];
+      setSelectedFoods(foods);
       setShowFoodsModal(true);
     } catch (error) {
-      toast.error("Lỗi khi tải thông tin món ăn");
-      console.error("Error fetching foods:", error);
+      const errorMessage = error.response?.data?.message || 'Lỗi khi tải thông tin món ăn';
+      toast.error(errorMessage);
+      console.error('Error fetching foods:', error);
     }
   };
 
@@ -90,16 +108,8 @@ const Reservations = () => {
         thoiGianBatDau:
           reservation.ThoiGianBatDau || reservation.thoiGianBatDau
             ? new Date(reservation.ThoiGianBatDau || reservation.thoiGianBatDau)
-                .toISOString()
-                .slice(0, 16)
-            : "",
-        thoiGianKetThuc:
-          reservation.ThoiGianKetThuc || reservation.thoiGianKetThuc
-            ? new Date(
-                reservation.ThoiGianKetThuc || reservation.thoiGianKetThuc
-              )
-                .toISOString()
-                .slice(0, 16)
+              .toISOString()
+              .slice(0, 16)
             : "",
         soNguoi: reservation.SoNguoi || reservation.soNguoi || 1,
         ghiChu: reservation.GhiChu || reservation.ghiChu || "",
@@ -114,14 +124,15 @@ const Reservations = () => {
 
   const handleAdd = async (values) => {
     try {
-      await api.post("/reservations", {
+      const payload = {
         MaBan: values.maBan,
         MaKH: values.maKH,
         ThoiGianBatDau: values.thoiGianBatDau,
-        ThoiGianKetThuc: values.thoiGianKetThuc,
         SoNguoi: parseInt(values.soNguoi),
         GhiChu: values.ghiChu || "",
-      });
+      };
+
+      await api.post("/reservations", payload);
       toast.success("Thêm đặt bàn thành công");
       fetchReservations();
       closeAddModal();
@@ -135,14 +146,12 @@ const Reservations = () => {
     if (!selectedReservation) return;
     try {
       await api.put(
-        `/reservations/${
-          selectedReservation.MaDatBan || selectedReservation.maDatBan
+        `/reservations/${selectedReservation.MaDatBan || selectedReservation.maDatBan
         }`,
         {
           MaBan: values.maBan,
-          MaKH: values.maKH,
+          MaKhachHang: values.maKH,
           ThoiGianBatDau: values.thoiGianBatDau,
-          ThoiGianKetThuc: values.thoiGianKetThuc,
           SoNguoi: parseInt(values.soNguoi),
           GhiChu: values.ghiChu || "",
         }
@@ -161,8 +170,7 @@ const Reservations = () => {
     if (!selectedReservation) return;
     try {
       await api.delete(
-        `/reservations/${
-          selectedReservation.MaDatBan || selectedReservation.maDatBan
+        `/reservations/${selectedReservation.MaDatBan || selectedReservation.maDatBan
         }`
       );
       toast.success("Xóa đặt bàn thành công");
@@ -178,9 +186,23 @@ const Reservations = () => {
   const formatDateTime = (dateString) => {
     if (!dateString) return "-";
     try {
+      // Nếu dateString không có 'Z' hoặc timezone, parse như local time
+      if (!dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
+        // Parse thủ công để đảm bảo là local time
+        const [datePart, timePart] = dateString.split('T');
+        if (datePart && timePart) {
+          const [year, month, day] = datePart.split('-').map(Number);
+          const [hour, minute, second] = timePart.split(':').map(Number);
+          const date = new Date(year, month - 1, day, hour, minute, second || 0);
+          return format(date, "HH:mm dd/MM/yyyy", { locale: vi });
+        }
+      }
+
+      // Nếu có timezone info, parse bình thường
       const date = new Date(dateString);
       return format(date, "HH:mm dd/MM/yyyy", { locale: vi });
     } catch (error) {
+      console.error('❌ formatDateTime error:', error);
       return "-";
     }
   };
@@ -226,13 +248,6 @@ const Reservations = () => {
         dataIndex: "ThoiGianBatDau",
         key: "ThoiGianBatDau",
         render: (text, record) => formatDateTime(text || record.thoiGianBatDau),
-      },
-      {
-        title: "Thời gian kết thúc",
-        dataIndex: "ThoiGianKetThuc",
-        key: "ThoiGianKetThuc",
-        render: (text, record) =>
-          formatDateTime(text || record.thoiGianKetThuc),
       },
       {
         title: "Số người",
@@ -293,7 +308,6 @@ const Reservations = () => {
     ],
     []
   );
-
   return (
     <div className="reservations-page">
       <div className="page-header">
@@ -334,48 +348,65 @@ const Reservations = () => {
         {selectedFoods.length > 0 ? (
           <Table
             dataSource={selectedFoods}
+            rowKey={(record) => record.id}
             columns={[
               {
-                title: "Tên món",
-                dataIndex: "tenMon",
-                key: "tenMon",
+                title: 'Hình ảnh',
+                dataIndex: 'hinhAnh',
+                key: 'hinhAnh',
+                width: 80,
+                render: (hinhAnh, record) => (
+                  <img
+                    src={hinhAnh || '/placeholder.png'}
+                    alt={record.tenMon}
+                    style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }}
+                  />
+                )
               },
               {
-                title: "Số lượng",
-                dataIndex: "soLuong",
-                key: "soLuong",
+                title: 'Tên món',
+                dataIndex: 'tenMon',
+                key: 'tenMon',
               },
               {
-                title: "Đơn giá",
-                dataIndex: "donGia",
-                key: "donGia",
-                render: (price) => `${price?.toLocaleString()} VNĐ`,
+                title: 'Số lượng',
+                dataIndex: 'soLuong',
+                key: 'soLuong',
+                align: 'center',
               },
               {
-                title: "Thành tiền",
-                key: "total",
-                render: (_, record) =>
-                  `${(
-                    (record.soLuong || 0) * (record.donGia || 0)
-                  ).toLocaleString()} VNĐ`,
+                title: 'Đơn giá',
+                dataIndex: 'donGia',
+                key: 'donGia',
+                align: 'right',
+                render: (price) => `${Math.round(Number(price || 0)).toLocaleString('vi-VN')} VNĐ`,
+              },
+              {
+                title: 'Thành tiền',
+                dataIndex: 'thanhTien',
+                key: 'thanhTien',
+                align: 'right',
+                render: (total) => (
+                  <Text strong style={{ color: '#1890ff' }}>
+                    {Math.round(Number(total || 0)).toLocaleString('vi-VN')} VNĐ
+                  </Text>
+                ),
               },
             ]}
             pagination={false}
             summary={() => (
               <Table.Summary fixed>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={3}>
-                    <Text strong>Tổng tiền:</Text>
+                  <Table.Summary.Cell index={0} colSpan={4} align="right">
+                    <Text strong style={{ fontSize: 16 }}>Tổng tiền:</Text>
                   </Table.Summary.Cell>
-                  <Table.Summary.Cell index={1}>
-                    <Text strong>
+                  <Table.Summary.Cell index={1} align="right">
+                    <Text strong style={{ fontSize: 18, color: '#52c41a' }}>
                       {selectedFoods
-                        .reduce(
-                          (total, food) =>
-                            total + (food.soLuong || 0) * (food.donGia || 0),
-                          0
-                        )
-                        .toLocaleString()}{" "}
+                        .reduce((total, food) => {
+                          return total + Number(food.thanhTien || 0);
+                        }, 0)
+                        .toLocaleString('vi-VN')}{' '}
                       VNĐ
                     </Text>
                   </Table.Summary.Cell>
@@ -384,7 +415,7 @@ const Reservations = () => {
             )}
           />
         ) : (
-          <p>Không có món ăn nào được đặt</p>
+          <Empty description="Không có món ăn nào được đặt" />
         )}
       </Modal>
 
@@ -405,7 +436,6 @@ const Reservations = () => {
             maBan: "",
             maKH: "",
             thoiGianBatDau: "",
-            thoiGianKetThuc: "",
             soNguoi: 1,
             ghiChu: "",
           }}
@@ -444,8 +474,8 @@ const Reservations = () => {
             >
               {customers.map((customer) => (
                 <Select.Option
-                  key={customer.MaKH || customer.maKhachHang}
-                  value={customer.MaKH || customer.maKhachHang}
+                  key={customer.MaKhachHang}
+                  value={customer.MaKhachHang}
                 >
                   {customer.HoTen || customer.hoTen} -{" "}
                   {customer.SoDienThoai || customer.soDienThoai}
@@ -459,6 +489,7 @@ const Reservations = () => {
             name="thoiGianBatDau"
             rules={[
               { required: true, message: "Vui lòng chọn thời gian bắt đầu" },
+              { validator: (_, value) => validateReservationTime(value) },
             ]}
           >
             <Input
@@ -467,15 +498,7 @@ const Reservations = () => {
             />
           </Form.Item>
 
-          <Form.Item
-            label="Thời gian kết thúc"
-            name="thoiGianKetThuc"
-            rules={[
-              { required: true, message: "Vui lòng chọn thời gian kết thúc" },
-            ]}
-          >
-            <Input type="datetime-local" />
-          </Form.Item>
+          {/* Removed End Time Input */}
 
           <Form.Item
             label="Số người"
@@ -552,8 +575,8 @@ const Reservations = () => {
             >
               {customers.map((customer) => (
                 <Select.Option
-                  key={customer.MaKH || customer.maKhachHang}
-                  value={customer.MaKH || customer.maKhachHang}
+                  key={customer.MaKhachHang}
+                  value={customer.MaKhachHang}
                 >
                   {customer.HoTen || customer.hoTen} -{" "}
                   {customer.SoDienThoai || customer.soDienThoai}
@@ -567,20 +590,13 @@ const Reservations = () => {
             name="thoiGianBatDau"
             rules={[
               { required: true, message: "Vui lòng chọn thời gian bắt đầu" },
+              { validator: (_, value) => validateReservationTime(value) },
             ]}
           >
             <Input type="datetime-local" />
           </Form.Item>
 
-          <Form.Item
-            label="Thời gian kết thúc"
-            name="thoiGianKetThuc"
-            rules={[
-              { required: true, message: "Vui lòng chọn thời gian kết thúc" },
-            ]}
-          >
-            <Input type="datetime-local" />
-          </Form.Item>
+          {/* Removed End Time Input */}
 
           <Form.Item
             label="Số người"

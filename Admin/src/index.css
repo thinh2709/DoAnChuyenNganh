@@ -18,6 +18,7 @@ body {
   min-height: 100vh;
   background-color: #f4f6fb;
   color: #0f1841;
+  overflow-x: hidden; /* ✅ Prevent horizontal scroll */
 }
 
 a {

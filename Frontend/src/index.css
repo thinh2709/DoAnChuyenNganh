@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+/* ✅ NEW: Thêm Playfair Display */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&display=swap");
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
@@ -16,12 +18,62 @@ a{
 }
 
 body {
-   min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  color: #1f2937;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* ✅ Prevent horizontal scroll */
 }
 
-.app{
-  width: 100%;
-  max-width: auto;
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f1c45;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1a2f5e;
+}
+
+/* Ant Design customization */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.4);
+}
+
+.ant-input:focus,
+.ant-input-number:focus,
+.ant-picker:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.1);
+}
+
+/* Smooth transitions */
+a,
+button {
+  transition: all 0.3s ease;
 }
 
 @keyframes fade-in {
@@ -34,4 +86,18 @@ body {
 }
 
 /* Custom styles below */
+
+/* ✅ NEW: Smooth scroll cho toàn trang */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* ✅ Padding khi scroll đến anchor */
+}
+
+/* ✅ Offset cho anchor links */
+#section-menu,
+#section-booking {
+  scroll-margin-top: 100px; /* ✅ Tăng lên 100px để có khoảng trống thoải mái */
+  margin-top: -20px; /* ✅ Thêm negative margin để giảm khoảng trống khi scroll */
+  padding-top: 20px; /* ✅ Bù lại bằng padding để nội dung không bị che */
+}
 

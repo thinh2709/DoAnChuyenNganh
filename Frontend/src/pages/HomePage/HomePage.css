@@ -2,25 +2,22 @@
   min-height: 100vh;
 }
 
+/* ✅ Hero Section - Banner chính */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.55), 
+      rgba(0, 0, 0, 0.55)
+    ),
+    url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=1920&q=80') center/cover no-repeat;
   color: white;
   padding: 120px 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
-}
-
-.hero-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("../../assets/food_1.png") center/cover;
-  opacity: 0.1;
-  z-index: 0;
+  min-height: 600px; /* ✅ Đảm bảo chiều cao tối thiểu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-content {
@@ -31,16 +28,19 @@
 }
 
 .hero-title {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
 }
 
 .hero-subtitle {
   font-size: 1.5rem;
   margin-bottom: 40px;
   opacity: 0.95;
+  text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .hero-buttons {
@@ -58,85 +58,264 @@
   text-decoration: none;
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  display: inline-block; /* ✅ Quan trọng */
 }
 
 .btn-primary {
-  background: white;
-  color: #667eea;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
 }
 
 .btn-primary:hover {
-  background: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.5);
+  color: white;
 }
 
 .btn-secondary {
   background: transparent;
   color: white;
   border-color: white;
+  backdrop-filter: blur(4px);
 }
 
 .btn-secondary:hover {
-  background: white;
-  color: #667eea;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
 }
 
-.features-section {
-  padding: 80px 20px;
-  background: #f8f9fa;
+/* ✅ About Us Section - Refactored với padding lớn hơn */
+.about-us-section {
+  padding: 100px 20px;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+.about-us-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.03) 0%, rgba(247, 147, 30, 0.03) 100%);
+  pointer-events: none;
 }
 
-.section-title {
+/* ✅ NEW: Section Header (giống "Đặt Bàn Ngay") */
+.about-us-header {
   text-align: center;
-  font-size: 2.5rem;
   margin-bottom: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.about-us-header .section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
   color: #333;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-}
-
-.feature-card {
-  background: white;
-  padding: 40px 30px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-10px);
-}
-
-.feature-card img {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 20px;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
   margin-bottom: 15px;
-  color: #333;
+  font-weight: 700;
 }
 
-.feature-card p {
+.about-us-header .section-subtitle {
+  font-size: 1.2rem;
   color: #666;
+  font-weight: 400;
+  max-width: 700px;
+  margin: 0 auto;
   line-height: 1.6;
 }
 
+/* ✅ Split Screen Layout */
+.about-us-grid {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Left: Image */
+.about-image-wrapper {
+  position: relative;
+  height: 600px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+              0 0 0 1px rgba(255, 107, 53, 0.1);
+}
+
+.about-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.about-image-wrapper:hover .about-image {
+  transform: scale(1.05);
+}
+
+/* Right: Content */
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.about-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ff6b35;
+  display: inline-block;
+  position: relative;
+  padding-left: 40px;
+}
+
+.about-eyebrow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6b35, #f7931e);
+}
+
+.about-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1a1f3c;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.about-description {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #6b7280;
+  margin: 0 0 20px 0;
+  text-align: justify;
+}
+
+/* ✅ NEW: Core Values Grid (Minimalist) */
+.core-values-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.value-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  transition: transform 0.3s ease;
+}
+
+.value-item:hover {
+  transform: translateX(5px);
+}
+
+.value-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(247, 147, 30, 0.1) 100%);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.value-item:hover .value-icon {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  transform: scale(1.1);
+}
+
+.value-text {
+  flex: 1;
+  text-align: left;
+}
+
+.value-text h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1f3c;
+  margin: 0 0 6px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.value-text p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ✅ REMOVED: Old features-section styles */
+.features-section {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .about-us-header {
+    margin-bottom: 50px;
+  }
+
+  .about-us-header .section-title {
+    font-size: 2.5rem;
+  }
+
+  .about-us-header .section-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .about-us-grid {
+    grid-template-columns: 1fr;
+    gap: 50px;
+  }
+
+  .about-image-wrapper {
+    height: 450px;
+  }
+
+  .about-title {
+    font-size: 2.5rem;
+  }
+
+  .core-values-grid {
+    gap: 25px;
+  }
+}
+
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 80px 20px;
+    min-height: 500px;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -145,8 +324,75 @@
     font-size: 1.2rem;
   }
 
-  .section-title {
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .about-us-section {
+    padding: 60px 20px;
+  }
+
+  .about-us-header {
+    margin-bottom: 40px;
+  }
+
+  .about-us-header .section-title {
     font-size: 2rem;
+  }
+
+  .about-us-header .section-subtitle {
+    font-size: 1rem;
+  }
+
+  .about-us-grid {
+    gap: 40px;
+  }
+
+  .about-image-wrapper {
+    height: 350px;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-eyebrow {
+    font-size: 11px;
+    padding-left: 35px;
+  }
+
+  .about-eyebrow::before {
+    width: 25px;
+  }
+
+  .about-description {
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .core-values-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .value-icon {
+    font-size: 28px;
+    width: 45px;
+    height: 45px;
+  }
+
+  .value-text h4 {
+    font-size: 16px;
+  }
+
+  .value-text p {
+    font-size: 13px;
   }
 }
 

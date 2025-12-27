@@ -146,17 +146,18 @@ const getTopSellingProducts = async (req, res, next) => {
       };
     }
 
+    // ✅ FIX: Specify table name to avoid ambiguous column reference
     const topProducts = await ChiTietDonHang.findAll({
       attributes: [
-        "MaMon",
-        [sequelize.fn("SUM", sequelize.col("SoLuong")), "totalQuantity"],
-        [sequelize.fn("SUM", sequelize.col("ThanhTien")), "totalRevenue"],
+        [sequelize.col("ChiTietDonHang.MaMon"), "MaMon"], // ✅ FIXED: Chỉ định rõ table
+        [sequelize.fn("SUM", sequelize.col("ChiTietDonHang.SoLuong")), "totalQuantity"], // ✅ FIXED
+        [sequelize.fn("SUM", sequelize.col("ChiTietDonHang.ThanhTien")), "totalRevenue"], // ✅ FIXED
       ],
       include: [
         {
           model: MonAn,
           as: "monAn",
-          attributes: ["TenMon", "Gia"],
+          attributes: ["MaMon", "TenMon", "Gia"], // ✅ Keep MaMon để verify
         },
         {
           model: DonHang,
@@ -171,14 +172,19 @@ const getTopSellingProducts = async (req, res, next) => {
         },
       ],
       where,
-      group: ["MaMon", "monAn.TenMon", "monAn.Gia"],
-      order: [[sequelize.fn("SUM", sequelize.col("SoLuong")), "DESC"]],
+      group: [
+        "ChiTietDonHang.MaMon", // ✅ FIXED: Chỉ định rõ table
+        "monAn.MaMon",          // ✅ FIXED: Thêm để tránh lỗi
+        "monAn.TenMon",
+        "monAn.Gia",
+      ],
+      order: [[sequelize.fn("SUM", sequelize.col("ChiTietDonHang.SoLuong")), "DESC"]], // ✅ FIXED
       limit: parseInt(limit),
       raw: false,
     });
 
     const result = topProducts.map((item) => ({
-      maMon: item.MaMon,
+      maMon: item.dataValues.MaMon,
       tenMon: item.monAn?.TenMon || "N/A",
       gia: parseFloat(item.monAn?.Gia || 0),
       totalQuantity: parseInt(item.dataValues.totalQuantity || 0),

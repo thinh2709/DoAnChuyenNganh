@@ -61,19 +61,18 @@ const Promotions = () => {
         moTa: selectedPromotion.MoTa || selectedPromotion.moTa || "",
         loaiGiamGia:
           selectedPromotion.LoaiGiamGia || selectedPromotion.loaiGiamGia,
-        giaTriGiam:
-          selectedPromotion.GiaTriGiam || selectedPromotion.giaTriGiam,
+        giaTriGiam: Number(selectedPromotion.GiaTriGiam || selectedPromotion.giaTriGiam || 0),
         ngayBatDau:
           selectedPromotion.NgayBatDau || selectedPromotion.ngayBatDau
             ? dayjs(
-                selectedPromotion.NgayBatDau || selectedPromotion.ngayBatDau
-              )
+              selectedPromotion.NgayBatDau || selectedPromotion.ngayBatDau
+            )
             : null,
         ngayKetThuc:
           selectedPromotion.NgayKetThuc || selectedPromotion.ngayKetThuc
             ? dayjs(
-                selectedPromotion.NgayKetThuc || selectedPromotion.ngayKetThuc
-              )
+              selectedPromotion.NgayKetThuc || selectedPromotion.ngayKetThuc
+            )
             : null,
         maApDung:
           selectedPromotion.MaApDung || selectedPromotion.maApDung || "",
@@ -191,11 +190,11 @@ const Promotions = () => {
         dataIndex: "GiaTriGiam",
         key: "GiaTriGiam",
         render: (text, record) => {
-          const value = parseFloat(text || record.giaTriGiam || 0);
+          const value = Number(text || record.giaTriGiam) || 0; // ✅ FIX
           const type = record.LoaiGiamGia || record.loaiGiamGia;
           return type === "PhanTram"
             ? `${value}%`
-            : `${value.toLocaleString("vi-VN")} VNĐ`;
+            : `${Math.round(value).toLocaleString("vi-VN")} VNĐ`;
         },
       },
       {
@@ -337,6 +336,7 @@ const Promotions = () => {
               {
                 type: "number",
                 min: 0,
+                transform: (value) => Number(value),
                 message: "Giá trị phải lớn hơn hoặc bằng 0",
               },
             ]}

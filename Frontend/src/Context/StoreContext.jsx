@@ -8,69 +8,37 @@ const StoreContextProvider = (props) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [foodList, setFoodList] = useState([]);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // ✅ NEW: Global login popup state
 
-  // Safe localStorage access
-  const safeLocalStorage = {
-    getItem: (key) => {
-      try {
-        if (typeof window !== "undefined" && window.localStorage) {
-          const value = window.localStorage.getItem(key);
-          return value ? JSON.parse(value) : null;
-        }
-        return null;
-      } catch (error) {
-        console.error(`Error reading ${key} from localStorage:`, error);
-        return null;
-      }
-    },
-    setItem: (key, value) => {
-      try {
-        if (typeof window !== "undefined" && window.localStorage) {
-          window.localStorage.setItem(key, JSON.stringify(value));
-          return true;
-        }
-        return false;
-      } catch (error) {
-        console.error(`Error writing ${key} to localStorage:`, error);
-        return false;
-      }
-    },
-    removeItem: (key) => {
-      try {
-        if (typeof window !== "undefined" && window.localStorage) {
-          window.localStorage.removeItem(key);
-          return true;
-        }
-        return false;
-      } catch (error) {
-        console.error(`Error removing ${key} from localStorage:`, error);
-        return false;
-      }
-    },
-  };
-
-  // Check for existing token on mount
+  // ✅ FIXED: Load token và user từ localStorage khi app mount
   useEffect(() => {
-    try {
-      if (typeof window !== "undefined" && window.localStorage) {
-        const savedToken = window.localStorage.getItem("token");
-        const savedUserStr = window.localStorage.getItem("user");
-        if (savedToken && savedUserStr) {
-          setToken(savedToken);
-          try {
-            const savedUser = JSON.parse(savedUserStr);
-            setUser(savedUser);
-          } catch (e) {
-            console.error("Error parsing user from localStorage:", e);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Error reading from localStorage:", error);
-    }
-  }, []);
+    const loadUserFromStorage = () => {
+      try {
+        const savedToken = localStorage.getItem("token");
+        const savedUserStr = localStorage.getItem("user");
 
-  // Fetch menu items
+        if (savedToken && savedUserStr) {
+          // ✅ Parse user JSON
+          const savedUser = JSON.parse(savedUserStr);
+
+          // ✅ Set vào state
+          setToken(savedToken);
+          setUser(savedUser);
+
+          console.log("✅ Loaded user from localStorage:", savedUser);
+        }
+      } catch (error) {
+        console.error("❌ Error loading user from localStorage:", error);
+        // ✅ Clear corrupted data
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    };
+
+    loadUserFromStorage();
+  }, []); // ✅ Chỉ chạy 1 lần khi mount
+
+  // ✅ Fetch menu items
   useEffect(() => {
     const fetchFoods = async () => {
       try {
@@ -79,9 +47,13 @@ const StoreContextProvider = (props) => {
           _id: item.MaMon || item.maMon,
           MaMon: item.MaMon || item.maMon,
           name: item.TenMon || item.tenMon,
-          price: item.Gia || item.gia,
+          TenMon: item.TenMon || item.tenMon,
+          price: parseFloat(item.Gia || item.gia || 0),
+          Gia: parseFloat(item.Gia || item.gia || 0),
           category: item.loaiMon?.TenLoai || item.loaiMon?.tenLoai || "",
-          image: item.HinhAnh || item.hinhAnh, // URL từ S3
+          loaiMon: item.loaiMon,
+          image: item.HinhAnh || item.hinhAnh,
+          HinhAnh: item.HinhAnh || item.hinhAnh,
         }));
         setFoodList(formattedFoods);
       } catch (error) {
@@ -92,28 +64,39 @@ const StoreContextProvider = (props) => {
     fetchFoods();
   }, []);
 
-  // Login function
+  // ✅ FIXED: Login function
   const login = (tokenValue, userData) => {
-    setToken(tokenValue);
-    setUser(userData);
-    // Store token as string, user as JSON
     try {
-      if (typeof window !== "undefined" && window.localStorage) {
-        window.localStorage.setItem("token", tokenValue);
-        window.localStorage.setItem("user", JSON.stringify(userData));
-      }
+      // ✅ Set state
+      setToken(tokenValue);
+      setUser(userData);
+
+      // ✅ Save to localStorage
+      localStorage.setItem("token", tokenValue); // String
+      localStorage.setItem("user", JSON.stringify(userData)); // JSON
+
+      console.log("✅ Login successful:", { token: tokenValue, user: userData });
     } catch (error) {
-      console.error("Error saving to localStorage:", error);
+      console.error("❌ Error saving to localStorage:", error);
     }
   };
 
-  // Logout function
+  // ✅ FIXED: Logout function
   const logout = () => {
-    setToken(null);
-    setUser(null);
-    setCartItems({});
-    safeLocalStorage.removeItem("token");
-    safeLocalStorage.removeItem("user");
+    try {
+      // ✅ Clear state
+      setToken(null);
+      setUser(null);
+      setCartItems({});
+
+      // ✅ Clear localStorage
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      console.log("✅ Logout successful");
+    } catch (error) {
+      console.error("❌ Error during logout:", error);
+    }
   };
 
   // Add to cart
@@ -142,13 +125,20 @@ const StoreContextProvider = (props) => {
     let totalAmount = 0;
     for (const itemId in cartItems) {
       if (cartItems[itemId] > 0) {
+        // ✅ Parse itemId to number for comparison
+        const numericItemId = parseInt(itemId);
+
         const itemInfo = foodList.find(
           (product) =>
-            product.MaMon === parseInt(itemId) ||
-            product._id === parseInt(itemId)
+            product.MaMon === numericItemId ||
+            product._id === numericItemId
         );
+
         if (itemInfo) {
-          totalAmount += itemInfo.price * cartItems[itemId];
+          // ✅ Ensure price is number
+          const price = parseFloat(itemInfo.price) || 0;
+          const quantity = parseInt(cartItems[itemId]) || 0;
+          totalAmount += price * quantity;
         }
       }
     }
@@ -160,15 +150,19 @@ const StoreContextProvider = (props) => {
     const items = [];
     for (const itemId in cartItems) {
       if (cartItems[itemId] > 0) {
+        // ✅ Parse itemId to number
+        const numericItemId = parseInt(itemId);
+
         const itemInfo = foodList.find(
           (product) =>
-            product.MaMon === parseInt(itemId) ||
-            product._id === parseInt(itemId)
+            product.MaMon === numericItemId ||
+            product._id === numericItemId
         );
+
         if (itemInfo) {
           items.push({
             ...itemInfo,
-            quantity: cartItems[itemId],
+            quantity: parseInt(cartItems[itemId]) || 0,
           });
         }
       }
@@ -190,6 +184,8 @@ const StoreContextProvider = (props) => {
     setUser,
     login,
     logout,
+    showLoginPopup, // ✅ NEW
+    setShowLoginPopup, // ✅ NEW
   };
 
   return (

@@ -9,37 +9,15 @@
   position: sticky;
   top: 0;
   z-index: 20;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.header-search {
-  flex: 1;
-  max-width: 520px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: #f5f6fb;
-  padding: 12px 16px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.header-search:focus-within {
-  border-color: rgba(93, 135, 255, 0.6);
-}
-
-.header-search svg {
-  color: #8a94b2;
+.header-title h1 {
   font-size: 20px;
-}
-
-.header-search input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  color: #182155;
-  outline: none;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
 }
 
 .header-actions {
@@ -83,10 +61,18 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 14px 6px 6px;
-  border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px 8px 8px;
+  border-radius: 12px;
+  background-color: #ffffff;
   border: 1px solid rgba(24, 33, 85, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.header-profile:hover {
+  background-color: #f9fafb;
+  border-color: rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .header-profile img {
@@ -94,38 +80,134 @@
   height: 42px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(93, 135, 255, 0.4);
+  border: 2px solid rgba(255, 107, 53, 0.4);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .profile-name {
   font-size: 14px;
   font-weight: 600;
-  color: #182155;
-  margin-bottom: 2px;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .profile-role {
   font-size: 12px;
-  color: #7b83a5;
+  color: #6b7280;
+  line-height: 1.2;
 }
 
-@media (max-width: 1024px) {
-  .header-search {
-    max-width: 360px;
+.chevron-icon {
+  font-size: 18px;
+  color: #6b7280;
+  transition: transform 0.3s ease;
+}
+
+.header-profile:hover .chevron-icon {
+  color: #ff6b35;
+  transform: translateY(2px);
+}
+
+/* Custom Dropdown Menu Styling */
+:global(.user-dropdown-menu .ant-dropdown-menu) {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  padding: 8px !important;
+  min-width: 200px !important;
+}
+
+:global(.user-dropdown-menu .ant-dropdown-menu-item) {
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  margin: 2px 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+:global(.user-dropdown-menu .ant-dropdown-menu-item:hover) {
+  background-color: #f9fafb !important;
+}
+
+:global(.user-dropdown-menu .ant-dropdown-menu-item-divider) {
+  margin: 8px 0 !important;
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Logout item hover effect */
+:global(.user-dropdown-menu .ant-dropdown-menu-item:last-child:hover) {
+  background-color: #fef2f2 !important;
+}
+
+/* ... (existing styles) */
+
+/* ✅ NEW: Global Header Styling Updates */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-toggle-btn {
+  display: none; /* Hidden on desktop */
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #1a1a1a;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.mobile-toggle-btn:hover {
+  background-color: #f3f4f6;
+}
+
+@media (max-width: 900px) { /* Show on tablet/mobile */
+  .mobile-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .admin-header {
+      justify-content: space-between;
   }
 }
 
 @media (max-width: 768px) {
   .admin-header {
-    flex-wrap: wrap;
-    gap: 12px;
-    height: auto;
-    padding: 16px;
+    padding: 12px 16px;
+    height: 60px;
   }
 
-  .header-search {
-    flex-basis: 100%;
-    max-width: none;
+  .header-title h1 {
+    font-size: 16px;
+    /* Hide long title on very small screens if needed */
+  }
+
+  .header-profile {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+  
+  .header-profile:hover {
+      background: transparent;
+      box-shadow: none;
+  }
+
+  .profile-info, .chevron-icon {
+    display: none;
+  }
+  
+  .header-profile img {
+      width: 36px;
+      height: 36px;
   }
 }
-

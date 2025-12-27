@@ -98,7 +98,7 @@ const getUserById = async (req, res, next) => {
  */
 const register = async (req, res, next) => {
   try {
-    const { HoTen, TenDangNhap, Email, SDT, MatKhau, MaVaiTro } = req.body;
+    const { HoTen, TenDangNhap, Email, SDT, MatKhau, MaVaiTro, DiaChi } = req.body;
 
     // Validation
     if (!HoTen || !TenDangNhap || !Email || !SDT || !MatKhau) {
@@ -139,10 +139,21 @@ const register = async (req, res, next) => {
       });
     }
 
+    // ✅ NEW: Kiểm tra SDT đã tồn tại trong KhachHang
+    const existingPhone = await KhachHang.findOne({
+      where: { SoDienThoai: SDT },
+    });
+
+    if (existingPhone) {
+      return res.status(409).json({
+        success: false,
+        message: "Số điện thoại đã được sử dụng",
+      });
+    }
+
     // Hash password
     const MatKhauHash = await bcrypt.hash(MatKhau, 10);
 
-    // Sử dụng transaction để đảm bảo tạo cả TaiKhoan và KhachHang
     const transaction = await sequelize.transaction();
 
     try {
@@ -154,20 +165,20 @@ const register = async (req, res, next) => {
           Email,
           SDT,
           MatKhauHash,
-          MaVaiTro: MaVaiTro || 3, // Mặc định là Khách hàng (cần kiểm tra MaVaiTro trong DB)
+          MaVaiTro: MaVaiTro || 3, // ✅ FIXED: MaVaiTro = 3 (KhachHang)
           TrangThai: "Active",
           NgayThamGia: new Date(),
         },
         { transaction }
       );
 
-      // Tạo KhachHang liên kết
+      // ✅ FIXED: Tạo KhachHang với DiaChi
       const newCustomer = await KhachHang.create(
         {
           HoTen,
           SoDienThoai: SDT,
           Email,
-          DiaChi: "", // Có thể để trống hoặc thêm field DiaChi vào form đăng ký
+          DiaChi: DiaChi || "", // ✅ Lưu địa chỉ
         },
         { transaction }
       );
@@ -187,9 +198,9 @@ const register = async (req, res, next) => {
         },
       });
 
-      // Thêm MaKhachHang vào user data
       const userData = user.toJSON();
       userData.MaKhachHang = newCustomer.MaKhachHang;
+      userData.DiaChi = newCustomer.DiaChi; // ✅ Trả về địa chỉ
 
       logger.info("User đăng ký thành công", {
         userId: user.MaTaiKhoan,
@@ -223,13 +234,18 @@ const login = async (req, res, next) => {
     if (!TenDangNhap || !MatKhau) {
       return res.status(400).json({
         success: false,
-        message: "Vui lòng nhập tên đăng nhập và mật khẩu",
+        message: "Vui lòng nhập email/tên đăng nhập và mật khẩu",
       });
     }
 
-    // Tìm user
+    // ✅ FIXED: Tìm user theo TenDangNhap HOẶC Email
     const user = await TaiKhoan.findOne({
-      where: { TenDangNhap },
+      where: {
+        [require('sequelize').Op.or]: [
+          { TenDangNhap: TenDangNhap },
+          { Email: TenDangNhap }
+        ]
+      },
       include: [
         {
           model: VaiTro,
@@ -241,25 +257,24 @@ const login = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Tên đăng nhập hoặc mật khẩu không đúng",
+        message: "Email/Tên đăng nhập hoặc mật khẩu không đúng",
       });
     }
 
-    // Kiểm tra mật khẩu
+    // ✅ Kiểm tra mật khẩu
     const isPasswordValid = await bcrypt.compare(MatKhau, user.MatKhauHash);
 
     if (!isPasswordValid) {
-      // Tăng số lần đăng nhập sai
       user.LoginAttempts += 1;
       if (user.LoginAttempts >= 5) {
         user.TrangThai = "Locked";
-        user.LockoutEnd = new Date(Date.now() + 30 * 60 * 1000); // Khóa 30 phút
+        user.LockoutEnd = new Date(Date.now() + 30 * 60 * 1000);
       }
       await user.save();
 
       return res.status(401).json({
         success: false,
-        message: "Tên đăng nhập hoặc mật khẩu không đúng",
+        message: "Email/Tên đăng nhập hoặc mật khẩu không đúng",
       });
     }
 
@@ -274,7 +289,6 @@ const login = async (req, res, next) => {
           message: `Tài khoản đã bị khóa. Vui lòng thử lại sau ${minutesLeft} phút`,
         });
       }
-      // Hết thời gian khóa, mở lại
       user.TrangThai = "Active";
       user.LoginAttempts = 0;
       user.LockoutEnd = null;
@@ -292,10 +306,20 @@ const login = async (req, res, next) => {
     user.LoginAttempts = 0;
     await user.save();
 
+    // ✅ NEW: Tìm KhachHang theo Email hoặc SDT
+    const khachHang = await KhachHang.findOne({
+      where: {
+        [require('sequelize').Op.or]: [
+          { Email: user.Email },
+          { SoDienThoai: user.SDT }
+        ]
+      }
+    });
+
     // Tạo token
     const token = generateToken(user);
 
-    // Trả về thông tin user (không bao gồm password)
+    // ✅ FIXED: Trả về thông tin user với DiaChi từ KhachHang
     const userData = {
       MaTaiKhoan: user.MaTaiKhoan,
       HoTen: user.HoTen,
@@ -305,11 +329,15 @@ const login = async (req, res, next) => {
       TrangThai: user.TrangThai,
       NgayThamGia: user.NgayThamGia,
       TenVaiTro: user.vaiTro?.TenVaiTro || "NhanVien",
+      // ✅ NEW: Thêm thông tin từ KhachHang
+      MaKhachHang: khachHang?.MaKhachHang || null,
+      DiaChi: khachHang?.DiaChi || "", // ✅ Frontend cần field này
     };
 
     logger.info("User đăng nhập thành công", {
       userId: user.MaTaiKhoan,
       tenDangNhap: user.TenDangNhap,
+      maKhachHang: khachHang?.MaKhachHang || null,
     });
 
     return res.json({

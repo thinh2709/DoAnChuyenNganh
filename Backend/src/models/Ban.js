@@ -26,9 +26,9 @@ const Ban = sequelize.define('Ban', {
     field: 'SucChua'
   },
   TrangThai: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.ENUM('TRONG', 'DAT_TRUOC', 'BAO_TRI'), // ✅ Chỉ 3 trạng thái: Trống, Đã đặt, Bảo trì
     allowNull: false,
-    defaultValue: true,
+    defaultValue: 'TRONG',
     field: 'TrangThai'
   },
   SoLuongDatCho: {

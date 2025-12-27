@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./Foods.css";
 import api from "../../utils/axios";
+import { buildFileUrl } from "../../config/apiConfig"; // ✅ Import helper function
 import { toast } from "react-toastify";
 import {
   Button,
@@ -54,7 +55,7 @@ const Foods = () => {
       console.error("Error fetching categories:", error);
       toast.error(
         "Lỗi khi tải danh sách loại món: " +
-          (error.response?.data?.message || error.message)
+        (error.response?.data?.message || error.message)
       );
     }
   };
@@ -170,12 +171,12 @@ const Foods = () => {
     },
     fileList: newFood.hinhAnh
       ? [
-          {
-            uid: "-1",
-            name: newFood.hinhAnh.name,
-            status: "done",
-          },
-        ]
+        {
+          uid: "-1",
+          name: newFood.hinhAnh.name,
+          status: "done",
+        },
+      ]
       : [],
     accept: "image/*",
   };
@@ -197,12 +198,12 @@ const Foods = () => {
     fileList:
       selectedFood?.hinhAnh instanceof File
         ? [
-            {
-              uid: "-1",
-              name: selectedFood.hinhAnh.name,
-              status: "done",
-            },
-          ]
+          {
+            uid: "-1",
+            name: selectedFood.hinhAnh.name,
+            status: "done",
+          },
+        ]
         : [],
     accept: "image/*",
   };
@@ -233,9 +234,13 @@ const Foods = () => {
         key: "HinhAnh",
         render: (image, record) => (
           <img
-            src={image || record.HinhAnh}
+            src={image ? (image.startsWith("http") ? image : buildFileUrl(image)) : ""}
             alt={record.TenMon || record.tenMon}
             className="food-thumb"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://via.placeholder.com/50?text=No+Img"; // Fallback image
+            }}
           />
         ),
       },
@@ -256,12 +261,15 @@ const Foods = () => {
         title: "Giá",
         dataIndex: "Gia",
         key: "Gia",
-        render: (price, record) => (
-          <span className="food-price">
-            {parseFloat(price || record.Gia || 0).toLocaleString()} VNĐ
-          </span>
-        ),
-        sorter: (a, b) => parseFloat(a.Gia || 0) - parseFloat(b.Gia || 0),
+        render: (price, record) => {
+          const amount = Number(price || record.Gia) || 0; // ✅ FIX
+          return (
+            <span className="food-price">
+              {Math.round(amount).toLocaleString("vi-VN")} VNĐ
+            </span>
+          );
+        },
+        sorter: (a, b) => Number(a.Gia || 0) - Number(b.Gia || 0), // ✅ FIX
       },
       {
         title: "Loại món",
@@ -342,7 +350,6 @@ const Foods = () => {
         <div className="toolbar-filters">
           <Input
             placeholder="Tìm kiếm theo tên món..."
-            prefix={<span style={{ marginRight: 8 }}>🔍</span>}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: 300 }}
@@ -497,7 +504,7 @@ const Foods = () => {
             validateTrigger="onBlur"
             rules={[
               { required: true, message: "Vui lòng nhập giá" },
-              { type: "number", min: 0, message: "Giá phải lớn hơn 0" },
+              { type: "number", min: 1, message: "Giá phải lớn hơn 0" },
             ]}
           >
             <InputNumber

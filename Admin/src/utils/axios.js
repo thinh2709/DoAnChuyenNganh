@@ -10,16 +10,14 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: Tự động thêm JWT token vào header
+
 api.interceptors.request.use(
   (config) => {
-    // Lấy token từ localStorage
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // Nếu Content-Type là multipart/form-data (thường khi gửi file), axios sẽ tự động thiết lập
     if (config.headers["Content-Type"] === "multipart/form-data") {
       delete config.headers["Content-Type"];
     }
@@ -30,18 +28,15 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor: Xử lý lỗi 401 (Unauthorized)
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       
-      // Chỉ redirect nếu không phải đang ở trang login
       if (window.location.pathname !== "/login") {
         toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
         window.location.href = "/login";

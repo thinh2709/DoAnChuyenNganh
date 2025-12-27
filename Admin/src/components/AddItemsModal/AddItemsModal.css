@@ -1,0 +1,191 @@
+.add-items-modal .ant-modal-body {
+  padding: 20px 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* ✅ Custom Scrollbar - Mảnh, bo tròn, màu xám nhạt */
+.add-items-modal .ant-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.add-items-modal .ant-modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.add-items-modal .ant-modal-body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.add-items-modal .ant-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.add-items-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-items-search {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.selected-items-summary {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f0f9ff;
+  border: 2px solid #1890ff;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.add-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.menu-item-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  background: white;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ✅ UX: Trạng thái Active khi quantity > 0 */
+.menu-item-card.active-item {
+  border: 2px solid #f97316; /* border-orange-500 */
+  background: #fff7ed; /* bg-orange-50 */
+  box-shadow: 0 4px 6px -1px rgba(249, 115, 22, 0.1), 0 2px 4px -2px rgba(249, 115, 22, 0.1); /* shadow-md with orange tint */
+}
+
+.menu-item-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+}
+
+.menu-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ✅ Typography: Sans-serif (Inter/Roboto) để đồng bộ */
+.menu-item-title {
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px; /* text-base/text-lg */
+  font-weight: 700; /* font-bold */
+  color: #1a1f3c;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.menu-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* ✅ UPDATED: Format giá tiền đúng chuẩn */
+.menu-item-price {
+  font-weight: 700;
+  color: #1890ff;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif; /* ✅ Giá tiền Sans-serif */
+  letter-spacing: 0.3px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f9fafb;
+  border-radius: 24px;
+  padding: 4px 6px;
+}
+
+.qty-btn {
+  width: 32px; /* w-8: to hơn */
+  height: 32px; /* h-8: to hơn */
+  border: none;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ✅ Nút + màu cam nhạt để nổi bật */
+.qty-btn:last-child {
+  background: #fff7ed; /* bg-orange-50 */
+  color: #f97316; /* text-orange-500 */
+  font-weight: 600;
+}
+
+.qty-btn:last-child:hover:not(:disabled) {
+  background: #fed7aa; /* bg-orange-200 */
+  color: #ea580c; /* text-orange-600 */
+}
+
+/* ✅ Nút - đậm hơn khi qty > 0 */
+.qty-btn:first-child:not(:disabled) {
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.qty-btn:first-child:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.quantity-display {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .add-items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .menu-item-image-wrapper {
+    height: 120px;
+  }
+}

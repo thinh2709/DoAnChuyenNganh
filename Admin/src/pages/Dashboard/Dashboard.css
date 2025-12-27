@@ -57,6 +57,51 @@
   display: flex;
   justify-content: flex-end;
   margin-top: -16px;
+  margin-bottom: 24px;
+}
+
+/* Time Filter Select Styling */
+.time-filter-container :global(.ant-select) {
+  border-radius: 12px;
+}
+
+.time-filter-container :global(.ant-select-selector) {
+  border-radius: 12px !important;
+  border: 2px solid rgba(255, 107, 53, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+}
+
+.time-filter-container :global(.ant-select-selector:hover) {
+  border-color: rgba(255, 107, 53, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15) !important;
+}
+
+.time-filter-container :global(.ant-select-focused .ant-select-selector) {
+  border-color: #ff6b35 !important;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1) !important;
+}
+
+/* Dropdown Menu Styling */
+:global(.ant-select-dropdown) {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+  padding: 8px !important;
+}
+
+:global(.ant-select-item) {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+:global(.ant-select-item-option-selected) {
+  background-color: rgba(255, 107, 53, 0.1) !important;
+  color: #ff6b35 !important;
+  font-weight: 600 !important;
+}
+
+:global(.ant-select-item-option-active) {
+  background-color: rgba(255, 107, 53, 0.05) !important;
 }
 
 .stats-grid {

@@ -59,6 +59,12 @@ const DatBan = sequelize.define('DatBan', {
     type: DataTypes.TEXT,
     allowNull: true,
     field: 'GhiChu'
+  },
+  TrangThai: {
+    type: DataTypes.ENUM('ChoXacNhan', 'DaXacNhan', 'DaHoanThanh', 'DaHuy'),
+    allowNull: false,
+    defaultValue: 'ChoXacNhan',
+    field: 'TrangThai'
   }
 }, {
   tableName: 'DatBan',

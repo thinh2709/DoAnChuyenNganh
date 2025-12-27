@@ -84,3 +84,16 @@
 {"timestamp":"2025-11-16T20:23:55.662Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
 {"timestamp":"2025-11-17T05:48:28.619Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
 {"timestamp":"2025-11-17T09:38:53.305Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-19T07:33:12.912Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:01:06.673Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:05:12.268Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:22:22.632Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:22:27.526Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:26:20.136Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:46:21.200Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:46:22.710Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:46:29.478Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-11-21T03:46:47.211Z","level":"warn","message":"Email không được cấu hình. Email sẽ không được gửi."}
+{"timestamp":"2025-12-12T08:24:29.443Z","level":"warn","message":"⚠️ Migration thất bại, nhưng server vẫn tiếp tục khởi động"}
+{"timestamp":"2025-12-12T08:24:54.260Z","level":"warn","message":"⚠️ Migration thất bại, nhưng server vẫn tiếp tục khởi động"}
+{"timestamp":"2025-12-12T08:25:05.853Z","level":"warn","message":"⚠️ Migration thất bại, nhưng server vẫn tiếp tục khởi động"}

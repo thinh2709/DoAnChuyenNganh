@@ -98,8 +98,7 @@ const Storage = () => {
     if (!selectedMaterial) return;
     try {
       await api.put(
-        `/storage/${
-          selectedMaterial.MaNguyenVatLieu || selectedMaterial.maNguyenVatLieu
+        `/storage/${selectedMaterial.MaNguyenVatLieu || selectedMaterial.maNguyenVatLieu
         }`,
         {
           TenNguyenVatLieu: values.tenNguyenVatLieu,
@@ -122,13 +121,12 @@ const Storage = () => {
     if (!selectedMaterial) return;
     try {
       await api.delete(
-        `/storage/${
-          selectedMaterial.MaNguyenVatLieu || selectedMaterial.maNguyenVatLieu
+        `/storage/${selectedMaterial.MaNguyenVatLieu || selectedMaterial.maNguyenVatLieu
         }`
       );
       toast.success("Xóa nguyên vật liệu thành công");
       fetchMaterials();
-        setShowDeleteModal(false);
+      setShowDeleteModal(false);
       setSelectedMaterial(null);
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
@@ -187,8 +185,8 @@ const Storage = () => {
         dataIndex: "SoLuongTon",
         key: "SoLuongTon",
         render: (text, record) => {
-          const quantity = parseFloat(text || record.soLuongTon || 0);
-  return (
+          const quantity = Number(text || record.soLuongTon) || 0; // ✅ FIX
+          return (
             <Text
               strong={quantity < 10}
               style={{ color: quantity < 10 ? "#ff4d4f" : "#1a1f3c" }}
@@ -198,8 +196,8 @@ const Storage = () => {
           );
         },
         sorter: (a, b) =>
-          parseFloat(a.SoLuongTon || a.soLuongTon || 0) -
-          parseFloat(b.SoLuongTon || b.soLuongTon || 0),
+          Number(a.SoLuongTon || a.soLuongTon || 0) -
+          Number(b.SoLuongTon || b.soLuongTon || 0), // ✅ FIX
       },
       {
         title: "Nhà cung cấp",
@@ -224,7 +222,7 @@ const Storage = () => {
           <Space>
             <Button
               icon={<FiEdit2 />}
-            onClick={() => {
+              onClick={() => {
                 setSelectedMaterial(record);
                 setShowEditModal(true);
               }}
@@ -234,11 +232,11 @@ const Storage = () => {
             <Button
               icon={<FiTrash2 />}
               danger
-                    onClick={() => {
+              onClick={() => {
                 setSelectedMaterial(record);
-                      setShowDeleteModal(true);
-                    }}
-                  >
+                setShowDeleteModal(true);
+              }}
+            >
               Xóa
             </Button>
           </Space>
@@ -263,7 +261,7 @@ const Storage = () => {
         <div>
           <p className="page-eyebrow">Quản lý Kho / Tồn kho</p>
           <h2>Quản lý Tồn kho</h2>
-      </div>
+        </div>
         <Button
           type="primary"
           icon={<FiPlus />}
@@ -282,7 +280,6 @@ const Storage = () => {
         <div className="toolbar-filters">
           <Input
             placeholder="Tìm kiếm theo tên nguyên vật liệu..."
-            prefix={<span style={{ marginRight: 8 }}>🔍</span>}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: 300 }}
@@ -312,8 +309,8 @@ const Storage = () => {
           >
             {`${lowStockFilter ? "✓ " : ""}Sắp hết hàng (< 10)`}
           </Button>
-          </div>
         </div>
+      </div>
 
       <div className="storage-card">
         <Table
@@ -321,8 +318,8 @@ const Storage = () => {
           dataSource={filteredMaterials}
           rowKey={(record) => record.MaNguyenVatLieu || record.maNguyenVatLieu}
           pagination={{ pageSize: 10 }}
-                />
-              </div>
+        />
+      </div>
 
       {/* Add Modal */}
       <Modal
@@ -399,7 +396,7 @@ const Storage = () => {
             <Button type="primary" htmlType="submit">
               Thêm
             </Button>
-              </div>
+          </div>
         </Form>
       </Modal>
 
@@ -471,7 +468,7 @@ const Storage = () => {
             <Button type="primary" htmlType="submit">
               Lưu
             </Button>
-            </div>
+          </div>
         </Form>
       </Modal>
 

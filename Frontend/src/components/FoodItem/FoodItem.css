@@ -1,72 +1,346 @@
-.food-item {
-  width: 100%;
-  margin: auto;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  animation: fade-in 1s;
+.food-item,
+.food-item-modern {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-.food-item-img-container {
-  width: 100%;
-  height: 200px;
+/* ✅ Hover Effect - Match Best Sellers */
+.food-item:hover,
+.food-item-modern:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ========== IMAGE CONTAINER - Match Best Sellers ========== */
+.food-item-image-container {
   position: relative;
+  width: 100%;
+  height: 280px;
   overflow: hidden;
-  border-radius: 15px 15px 0 0;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 20%);
 }
 
 .food-item-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.food-item-info {
-  padding: 20px;
+/* ✅ Zoom Effect on Hover */
+.food-item:hover .food-item-image {
+  transform: scale(1.1);
 }
 
-.food-item-name {
-  margin-bottom: 10px;
-  color: rgba(255, 0, 0, 0.886);
-}
-
-.food-item-name p {
-  font-size: 20px;
-  font-weight: 500;
-}
-
-.food-item-price {
-  font-size: 18px;
-  font-weight: 500;
-  color: rgb(6, 139, 6);
-  margin: 10px 0;
-}
-
-.food-item-img-container {
-  position: relative;
-}
-
-.food-item-img-container .add {
-  width: 45px;
+/* ========== BADGES ========== */
+.food-item-badges {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
-  cursor: pointer;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.food-item-badges > * {
+  pointer-events: auto;
+}
+
+/* Badge: Bán chạy */
+.badge-bestseller {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(255, 65, 108, 0.4);
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Badge: Favorite (Heart) */
+.badge-favorite {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.food-item-counter {
+.badge-favorite:hover {
+  transform: scale(1.1);
+  background: white;
+}
+
+.badge-favorite svg {
+  width: 18px;
+  height: 18px;
+  color: #ff4d4f;
+  transition: all 0.3s ease;
+}
+
+.badge-favorite.active svg {
+  fill: #ff4d4f;
+  transform: scale(1.2);
+}
+
+/* ========== HOVER OVERLAY ========== */
+.food-item-overlay {
   position: absolute;
-  bottom: 15px;
-  right: 15px;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.food-item:hover .food-item-overlay {
+  opacity: 1;
+}
+
+.quick-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: white;
+  color: #1a1f3c;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(10px);
+}
+
+.food-item:hover .quick-add-btn {
+  transform: translateY(0);
+}
+
+.quick-add-btn:hover {
+  background: #1a1f3c;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ========== CONTENT - Match Best Sellers ========== */
+.food-item-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+/* Category Tag - Fit content width (không bị kéo giãn full width) */
+.food-item-category {
+  display: inline-block;
+  align-self: flex-start;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Name - Match Best Sellers card-title */
+.food-item-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== FOOTER - Match Best Sellers card-footer ========== */
+.food-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: auto;
+}
+
+/* Price - Single line (không xuống dòng) */
+.food-item-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ff6b35;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+}
+
+/* Add to Cart Button - Match Best Sellers add-to-cart-btn */
+.food-item-add-to-cart-btn {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.food-item-add-to-cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.food-item-add-to-cart-btn:active {
+  transform: translateY(0);
+}
+
+/* Counter (When item in cart) - Improved style */
+.food-item-counter {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px;
-  border-radius: 50px;
-  background-color: whitesmoke;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  padding: 10px 16px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
 }
 
-.food-item-counter img {
-  width: 30px;
+.counter-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  color: #16a34a;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.counter-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.counter-btn:active {
+  transform: scale(0.95);
+}
+
+.counter-value {
+  min-width: 24px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+/* ========== RESPONSIVE - Match Best Sellers ========== */
+@media (max-width: 768px) {
+  .food-item,
+  .food-item-modern {
+    border-radius: 16px;
+  }
+
+  .food-item-image-container {
+    height: 200px;
+  }
+
+  .food-item-content {
+    padding: 20px;
+  }
+
+  .food-item-name {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  .food-item-category {
+    margin-bottom: 12px;
+  }
+
+  .food-item-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .food-item-add-to-cart-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .food-item-counter {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Loading Skeleton */
+.food-item-card.loading {
+  animation: pulse-skeleton 1.5s infinite;
+}
+
+@keyframes pulse-skeleton {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }

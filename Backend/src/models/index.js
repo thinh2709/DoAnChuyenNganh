@@ -7,7 +7,7 @@ const VaiTro = require("./VaiTro");
 const TaiKhoan = require("./TaiKhoan");
 const LoaiMon = require("./LoaiMon");
 const MonAn = require("./MonAn");
-const KhachHang = require("./KhachHang");
+const KhachHang = require("./KhachHang"); // ✅ Đảm bảo import đúng
 const Ban = require("./Ban");
 const DonHang = require("./DonHang");
 const ChiTietDonHang = require("./ChiTietDonHang");
@@ -21,6 +21,9 @@ const CaLamViec = require("./CaLamViec");
 const LichLamViec = require("./LichLamViec");
 const KhuyenMai = require("./KhuyenMai");
 
+// ✅ Kiểm tra KhachHang có được import đúng không
+console.log("✅ KhachHang model:", typeof KhachHang); // Phải log "function"
+
 // Định nghĩa relationships
 
 // VaiTro - TaiKhoan (1-N)
@@ -31,7 +34,7 @@ TaiKhoan.belongsTo(VaiTro, { foreignKey: "MaVaiTro", as: "vaiTro" });
 LoaiMon.hasMany(MonAn, { foreignKey: "MaLoai", as: "monAns" });
 MonAn.belongsTo(LoaiMon, { foreignKey: "MaLoai", as: "loaiMon" });
 
-// KhachHang - DonHang (1-N)
+// ✅ KhachHang - DonHang (1-N)
 KhachHang.hasMany(DonHang, { foreignKey: "KhachHangID", as: "donHangs" });
 DonHang.belongsTo(KhachHang, { foreignKey: "KhachHangID", as: "khachHang" });
 
@@ -63,8 +66,14 @@ MonAn.hasMany(DatBanMonAn, { foreignKey: "MaMon", as: "datBanMonAn" });
 DatBanMonAn.belongsTo(MonAn, { foreignKey: "MaMon", as: "monAn" });
 
 // NhaCungCap - NguyenVatLieu (1-N)
-NhaCungCap.hasMany(NguyenVatLieu, { foreignKey: "MaNhaCungCap", as: "nguyenVatLieus" });
-NguyenVatLieu.belongsTo(NhaCungCap, { foreignKey: "MaNhaCungCap", as: "nhaCungCap" });
+NhaCungCap.hasMany(NguyenVatLieu, {
+  foreignKey: "MaNhaCungCap",
+  as: "nguyenVatLieus",
+});
+NguyenVatLieu.belongsTo(NhaCungCap, {
+  foreignKey: "MaNhaCungCap",
+  as: "nhaCungCap",
+});
 
 // PhongBan - NhanVien (1-N)
 PhongBan.hasMany(NhanVien, { foreignKey: "MaPhongBan", as: "nhanViens" });
@@ -86,13 +95,47 @@ LichLamViec.belongsTo(CaLamViec, { foreignKey: "MaCa", as: "caLamViec" });
 KhuyenMai.hasMany(MonAn, { foreignKey: "MaKM", as: "monAns" });
 MonAn.belongsTo(KhuyenMai, { foreignKey: "MaKM", as: "khuyenMai" });
 
+// ✅ COMMENT: TaiKhoan và KhachHang không có FK trực tiếp
+// Chúng được link thông qua Email/SDT
+// Để truy vấn, sử dụng findOne với điều kiện OR trong controller
+
+// ✅ Nếu muốn thêm FK trong tương lai:
+// 1. Thêm cột MaTaiKhoan vào bảng KhachHang (migration)
+// 2. Uncomment code bên dưới:
+
+/*
+TaiKhoan.hasOne(KhachHang, {
+  foreignKey: "MaTaiKhoan",
+  as: "khachHang",
+  constraints: false, // Vì không có FK trong DB hiện tại
+});
+
+KhachHang.belongsTo(TaiKhoan, {
+  foreignKey: "MaTaiKhoan",
+  as: "taiKhoan",
+  constraints: false,
+});
+*/
+
+// ✅ NEW: Thiết lập mối quan hệ DatBan <-> DonHang (1-1)
+DatBan.hasOne(DonHang, {
+  foreignKey: "MaDatBan",
+  as: "donHang",
+  onDelete: "SET NULL",
+});
+
+DonHang.belongsTo(DatBan, {
+  foreignKey: "MaDatBan",
+  as: "datBan",
+});
+
 module.exports = {
   sequelize,
   VaiTro,
   TaiKhoan,
   LoaiMon,
   MonAn,
-  KhachHang,
+  KhachHang, // ✅ Đảm bảo export
   Ban,
   DonHang,
   ChiTietDonHang,

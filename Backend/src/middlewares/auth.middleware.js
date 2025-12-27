@@ -12,72 +12,50 @@ const { TaiKhoan, VaiTro } = require("../models");
  */
 const authenticate = async (req, res, next) => {
   try {
-    // Lấy token từ header
-    const authHeader = req.headers.authorization;
+    const token = req.headers.authorization?.split(" ")[1];
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Không có token xác thực",
+        message: "Vui lòng đăng nhập",
       });
     }
 
-    const token = authHeader.substring(7); // Bỏ "Bearer " prefix
+    // ✅ FIX: Thêm blacklist check (nếu có logout)
+    // const isBlacklisted = await checkTokenBlacklist(token);
+    // if (isBlacklisted) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Token đã bị vô hiệu hóa",
+    //   });
+    // }
 
-    // Verify token
     const decoded = jwt.verify(token, config.jwt.secret);
 
-    // Lấy thông tin user từ database
-    const taiKhoan = await TaiKhoan.findByPk(decoded.id, {
-      include: [
-        {
-          model: VaiTro,
-          as: "vaiTro",
-        },
-      ],
+    // ✅ FIX: Kiểm tra user vẫn tồn tại trong DB
+    const { TaiKhoan } = require("../models");
+    const user = await TaiKhoan.findByPk(decoded.id, {
+      attributes: { exclude: ["MatKhau"] },
     });
 
-    if (!taiKhoan) {
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Token không hợp lệ",
+        message: "Tài khoản không tồn tại",
       });
     }
 
-    // Kiểm tra trạng thái tài khoản
-    if (taiKhoan.TrangThai === "Locked") {
-      if (taiKhoan.LockoutEnd && new Date(taiKhoan.LockoutEnd) > new Date()) {
-        return res.status(403).json({
-          success: false,
-          message: "Tài khoản đã bị khóa",
-        });
-      }
-    }
-
-    if (taiKhoan.TrangThai !== "Active") {
+    // ✅ FIX: Kiểm tra trạng thái tài khoản
+    if (user.TrangThai === "Khoa") {
       return res.status(403).json({
         success: false,
-        message: "Tài khoản đã bị vô hiệu hóa",
+        message: "Tài khoản đã bị khóa",
       });
     }
 
-    // Gán thông tin user vào request
-    req.user = {
-      id: taiKhoan.MaTaiKhoan,
-      tenDangNhap: taiKhoan.TenDangNhap,
-      email: taiKhoan.Email,
-      hoTen: taiKhoan.HoTen,
-      role: taiKhoan.vaiTro?.TenVaiTro || "NhanVien",
-    };
-
+    req.user = decoded;
     next();
   } catch (error) {
-    if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({
-        success: false,
-        message: "Token không hợp lệ",
-      });
-    }
     if (error.name === "TokenExpiredError") {
       return res.status(401).json({
         success: false,
@@ -85,10 +63,17 @@ const authenticate = async (req, res, next) => {
       });
     }
 
-    return res.status(500).json({
+    // ✅ FIX: Handle invalid token
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token không hợp lệ",
+      });
+    }
+
+    return res.status(401).json({
       success: false,
-      message: "Lỗi xác thực",
-      error: error.message,
+      message: "Xác thực thất bại",
     });
   }
 };

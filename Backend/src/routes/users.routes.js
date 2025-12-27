@@ -13,12 +13,13 @@ const {
   deleteUser,
 } = require("../controllers/users.controller");
 const { authenticate, isAdmin } = require("../middlewares/auth.middleware");
+const { authLimiter } = require("../middlewares/rateLimiter.middleware"); // ✅ NEW
 
-// Public routes
-router.post("/register", register);
-router.post("/login", login);
+// ✅ Public routes với rate limiting
+router.post("/register", authLimiter, register);
+router.post("/login", authLimiter, login);
 
-// Protected routes - cần xác thực
+// Protected routes
 router.get("/", authenticate, isAdmin, getAllUsers);
 router.get("/:id", authenticate, getUserById);
 router.put("/:id", authenticate, isAdmin, updateUser);

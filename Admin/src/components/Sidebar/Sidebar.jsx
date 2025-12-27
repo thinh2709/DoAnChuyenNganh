@@ -14,8 +14,10 @@ import {
   FiLayers,
   FiUser,
   FiTrendingUp,
+  FiX // ✅ NEW Import
 } from "react-icons/fi";
 
+// ... (sidebarMenu array remains unchanged) ...
 const sidebarMenu = [
   {
     id: "dashboard",
@@ -26,7 +28,7 @@ const sidebarMenu = [
   },
   {
     id: "sales",
-    label: "🍽️ Quản lý Bán hàng",
+    label: "Quản lý Bán hàng",
     icon: <FiShoppingBag />,
     children: [
       { to: "/order", label: "Order (Đơn hàng)", icon: <FiClipboard /> },
@@ -40,7 +42,7 @@ const sidebarMenu = [
   },
   {
     id: "menu",
-    label: "🥑 Quản lý Thực đơn",
+    label: "Quản lý Thực đơn",
     icon: <FiBookOpen />,
     children: [
       { to: "/foods", label: "Foods (Danh sách món ăn)", icon: <FiLayers /> },
@@ -53,7 +55,7 @@ const sidebarMenu = [
   },
   {
     id: "inventory",
-    label: "📦 Quản lý Kho",
+    label: "Quản lý Kho",
     icon: <FiArchive />,
     children: [
       { to: "/storage", label: "Storage (Tồn kho)", icon: <FiArchive /> },
@@ -66,7 +68,7 @@ const sidebarMenu = [
   },
   {
     id: "people",
-    label: "👥 Quản lý Nhân sự",
+    label: "Quản lý Nhân sự",
     icon: <FiUsers />,
     children: [
       { to: "/employees", label: "Employees (Nhân viên)", icon: <FiUser /> },
@@ -85,7 +87,7 @@ const sidebarMenu = [
   },
   {
     id: "business",
-    label: "📈 Kinh doanh & Báo cáo",
+    label: "Kinh doanh",
     icon: <FiBarChart2 />,
     children: [
       { to: "/customers", label: "Customers (Khách hàng)", icon: <FiUsers /> },
@@ -94,16 +96,11 @@ const sidebarMenu = [
         label: "Promotions (Khuyến mãi)",
         icon: <FiTrendingUp />,
       },
-      {
-        to: "/statistics",
-        label: "Statistics (Thống kê)",
-        icon: <FiBarChart2 />,
-      },
     ],
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => { // ✅ Props
   const location = useLocation();
 
   const initialOpen = useMemo(() => {
@@ -143,6 +140,12 @@ const Sidebar = () => {
       key={route.to}
       to={route.to}
       className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+      onClick={() => {
+        // Auto close on mobile click
+        if (window.innerWidth <= 900 && toggleSidebar) {
+          toggleSidebar();
+        }
+      }}
     >
       <span className="link-icon">{route.icon}</span>
       <span className="link-label">{route.label}</span>
@@ -150,56 +153,71 @@ const Sidebar = () => {
   );
 
   return (
-    <aside className="admin-sidebar">
-      <div className="sidebar-logo">
-        <div className="logo-mark">TR</div>
-        <div className="logo-text">
-          <p>Techzy Restaurant</p>
-          <span>Admin Portal</span>
-        </div>
-      </div>
+    <>
+      {/* Overlay for mobile */}
+      <div
+        className={`sidebar-overlay ${isOpen ? 'open' : ''}`}
+        onClick={toggleSidebar}
+      ></div>
 
-      <nav className="sidebar-menu">
-        {sidebarMenu.map((item) =>
-          item.type === "single" ? (
-            <div key={item.id} className="sidebar-single">
-              {renderNavLink(item)}
+      <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-logo">
+          <div className="logo-content"> {/* Wrapper for logo items */}
+            <div className="logo-mark">TR</div>
+            <div className="logo-text">
+              <p>Techzy Restaurant</p>
+              <span>Admin Portal</span>
             </div>
-          ) : (
-            <div
-              key={item.id}
-              className={`sidebar-group ${
-                item.children.some((child) =>
+          </div>
+
+          {/* Close button for mobile */}
+          <button className="sidebar-close-btn" onClick={toggleSidebar}>
+            <FiX />
+          </button>
+        </div>
+
+        <nav className="sidebar-menu">
+          {/* Same rendering logic */}
+          {sidebarMenu.map((item) =>
+            item.type === "single" ? (
+              <div key={item.id} className="sidebar-single">
+                {renderNavLink(item)}
+              </div>
+            ) : (
+              <div
+                key={item.id}
+                className={`sidebar-group ${item.children.some((child) =>
                   location.pathname.startsWith(child.to)
                 )
                   ? "group-active"
                   : ""
-              }`}
-            >
-              <button
-                className="group-header"
-                onClick={() => toggleMenu(item.id)}
+                  }`}
               >
-                <span className="group-title">
-                  <span className="group-icon">{item.icon}</span>
-                  {item.label}
-                </span>
-                <span
-                  className={`group-caret ${openMenus[item.id] ? "open" : ""}`}
+                <button
+                  className="group-header"
+                  onClick={() => toggleMenu(item.id)}
                 >
-                  ▾
-                </span>
-              </button>
-              {openMenus[item.id] && (
-                <div className="sidebar-submenu">
-                  {item.children.map((route) => renderNavLink(route))}
-                </div>
-              )}
-            </div>
-          )
-        )}
-      </nav>
-    </aside>
+                  <span className="group-title">
+                    <span className="group-icon">{item.icon}</span>
+                    {item.label}
+                  </span>
+                  <span
+                    className={`group-caret ${openMenus[item.id] ? "open" : ""}`}
+                  >
+                    ▾
+                  </span>
+                </button>
+                {openMenus[item.id] && (
+                  <div className="sidebar-submenu">
+                    {item.children.map((route) => renderNavLink(route))}
+                  </div>
+                )}
+              </div>
+            )
+          )}
+        </nav>
+      </aside>
+    </>
   );
 };
 

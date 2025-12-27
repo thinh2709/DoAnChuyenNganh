@@ -168,6 +168,8 @@
   opacity: 0.8;
 }
 
+/* ... existing styles ... */
+
 @media (max-width: 1200px) {
   .admin-sidebar {
     width: 240px;
@@ -175,23 +177,85 @@
   }
 }
 
+/* ✅ NEW: Styles cho Overlay và Mobile Menu */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 49; /* Dưới sidebar (50) */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.logo-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 @media (max-width: 900px) {
   .admin-sidebar {
-    position: relative;
-    width: 100%;
-    min-height: auto;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hide off-screen */
+    width: 280px;
+    height: 100vh;
+    z-index: 50;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+    padding: 24px 20px;
+    /* Reset flex direction về column cho mobile, vì không còn là horizontal scroll bar nữa */
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  
+  .admin-sidebar.open {
+    left: 0;
   }
 
   .sidebar-menu {
-    flex-direction: row;
-    gap: 16px;
+    flex-direction: column; /* Trả về dạng dọc */
+    gap: 12px;
+  }
+  
+  .sidebar-group, .sidebar-single {
+      min-width: auto; /* Reset width */
+  }
+  
+  .sidebar-logo {
+      justify-content: space-between;
+      width: 100%;
   }
 
-  .sidebar-group,
-  .sidebar-single {
-    min-width: 260px;
+  .sidebar-close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
   }
 }

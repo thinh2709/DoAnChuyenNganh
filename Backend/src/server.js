@@ -1,7 +1,4 @@
-/**
- * File khởi động server
- * Kết nối database và start Express server
- */
+
 require("dotenv").config();
 const app = require("./app");
 const {
@@ -11,6 +8,7 @@ const {
 } = require("./config/database");
 const config = require("./config/env");
 const logger = require("./utils/logger");
+const { initScheduledJobs, stopScheduledJobs } = require("./utils/cronJobs");
 
 // Hàm khởi động server
 const startServer = async () => {
@@ -34,6 +32,9 @@ const startServer = async () => {
       logger.info(`🚀 Server đang chạy trên port ${PORT}`);
       logger.info(`📝 Environment: ${config.server.nodeEnv}`);
       logger.info(`🌐 API Base URL: http://localhost:${PORT}/api`);
+
+      // Khởi động Scheduled Jobs sau khi server đã sẵn sàng
+      initScheduledJobs();
     });
   } catch (error) {
     logger.error("Lỗi khởi động server", { error: error.message });
@@ -57,12 +58,14 @@ process.on("uncaughtException", (error) => {
 // Xử lý tín hiệu dừng server
 process.on("SIGTERM", async () => {
   logger.info("SIGTERM signal received: closing HTTP server");
+  stopScheduledJobs(); // Dừng cron jobs trước khi đóng server
   await sequelize.close();
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
   logger.info("SIGINT signal received: closing HTTP server");
+  stopScheduledJobs(); // Dừng cron jobs trước khi đóng server
   await sequelize.close();
   process.exit(0);
 });

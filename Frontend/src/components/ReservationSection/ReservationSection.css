@@ -1,0 +1,551 @@
+.reservation-section {
+  padding: 100px 20px 80px 20px;
+  background: linear-gradient(135deg, #fff8f3 0%, #ffe8d9 100%);
+}
+
+.reservation-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.reservation-header .section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.reservation-header .section-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.reservation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ✅ NEW: Hero Image Section (Thay thế info cards) */
+.reservation-hero {
+  position: relative;
+  min-height: 650px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 650px;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 50px 40px;
+  z-index: 2;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  line-height: 1.2;
+  text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.5px;
+}
+
+.hero-description {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  line-height: 1.6;
+  text-shadow: 1px 2px 6px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+}
+
+.hero-features {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  color: #ff6b35;
+}
+
+.feature-item span {
+  white-space: nowrap;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Right: Form (GIỮ NGUYÊN 100%) */
+.reservation-form-wrapper {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-form-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-input,
+.form-textarea {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 2px solid #e0e0e0;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.form-input:hover,
+.form-textarea:hover {
+  border-color: #ff6b35;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #ff6b35;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+  background: white;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.submit-btn-compact {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  border: none;
+  padding: 16px 30px;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+}
+
+.submit-btn-compact:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.4);
+}
+
+.submit-btn-compact:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.form-note {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ✅ NEW: Styles cho nút chọn món và danh sách món */
+.form-group-dishes {
+  margin-bottom: 20px;
+}
+
+.add-dish-btn-compact {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(247, 147, 30, 0.08) 100%);
+  border: 2px dashed #ff6b35;
+  border-radius: 12px;
+  color: #ff6b35;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-dish-btn-compact:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(247, 147, 30, 0.15) 100%);
+  border-color: #f7931e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.25);
+}
+
+.add-dish-btn-compact:active {
+  transform: translateY(0);
+}
+
+/* Selected dishes list */
+.selected-dishes-compact {
+  margin-top: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dish-item-compact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.dish-thumb-small {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.dish-info-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dish-info-compact strong {
+  font-family: 'Playfair Display', 'Times New Roman', serif; /* ✅ Font Serif */
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f3c;
+}
+
+.dish-quantity-small {
+  font-size: 13px;
+  color: #ff6b35;
+  font-weight: 600;
+}
+
+.dish-price-small {
+  font-size: 14px;
+  font-weight: 700;
+  color: #52c41a;
+  font-family: 'Inter', sans-serif; /* ✅ Giá tiền Sans-serif */
+  white-space: nowrap;
+}
+
+.remove-dish-btn-small {
+  background: transparent;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-dish-btn-small:hover {
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.dishes-total-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 2px dashed #e0e0e0;
+  font-size: 16px;
+}
+
+.dishes-total-compact strong {
+  color: #333;
+}
+
+.dishes-total-compact span {
+  color: #52c41a;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* Menu Modal styles */
+.menu-modal-reservation .menu-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.menu-search {
+  margin-bottom: 16px;
+}
+
+.menu-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.menu-card-modal {
+  transition: all 0.3s ease;
+}
+
+.menu-card-modal:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.menu-card-modal.selected {
+  border: 2px solid #52c41a;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.2);
+}
+
+.menu-card-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* ✅ NEW: Đồng bộ Typography với trang Yêu thích */
+.menu-card-modal .ant-card-meta-title {
+  font-family: 'Playfair Display', 'Times New Roman', serif !important; /* ✅ Font Serif sang trọng */
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #1a1f3c !important;
+  line-height: 1.4 !important;
+  margin-bottom: 12px !important;
+}
+
+.menu-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+/* ✅ UPDATED: Format giá tiền đúng chuẩn */
+.menu-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #667eea;
+  font-family: 'Inter', sans-serif; /* ✅ Giá tiền dùng Sans-serif */
+  letter-spacing: 0.3px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-controls button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d9d9d9;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.quantity-controls button:hover:not(:disabled) {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+.quantity-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quantity-controls .quantity {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .reservation-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .reservation-hero {
+    min-height: 500px;
+    order: 1;
+  }
+
+  .hero-image-wrapper {
+    min-height: 500px;
+  }
+
+  .reservation-form-wrapper {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .reservation-section {
+    padding: 40px 15px 30px 15px;
+  }
+
+  .reservation-header {
+    margin-bottom: 40px;
+  }
+
+  .reservation-header .section-title {
+    font-size: 2rem;
+  }
+
+  .reservation-hero {
+    min-height: 450px;
+  }
+
+  .hero-image-wrapper {
+    min-height: 450px;
+  }
+
+  .hero-content {
+    padding: 30px 24px;
+    gap: 20px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .hero-features {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .feature-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .reservation-form-wrapper {
+    padding: 30px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-grid-modal {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .dish-item-compact {
+    flex-wrap: wrap;
+  }
+
+  .dish-price-small {
+    width: 100%;
+    text-align: right;
+  }
+}

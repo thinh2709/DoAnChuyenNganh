@@ -74,7 +74,7 @@ const Customers = () => {
     if (!selectedCustomer) return;
     try {
       await api.put(
-        `/customers/${selectedCustomer.MaKH || selectedCustomer.maKhachHang}`,
+        `/customers/${selectedCustomer.MaKhachHang}`,
         {
           HoTen: values.hoTen,
           SoDienThoai: values.soDienThoai,
@@ -96,7 +96,7 @@ const Customers = () => {
     if (!selectedCustomer) return;
     try {
       await api.delete(
-        `/customers/${selectedCustomer.MaKH || selectedCustomer.maKhachHang}`
+        `/customers/${selectedCustomer.MaKhachHang}`
       );
       toast.success("Xóa khách hàng thành công");
       fetchCustomers();
@@ -201,7 +201,7 @@ const Customers = () => {
         <Table
           columns={columns}
           dataSource={customers}
-          rowKey={(record) => record.MaKH || record.maKhachHang}
+          rowKey={(record) => record.MaKhachHang}
           pagination={{ pageSize: 10 }}
         />
       </div>

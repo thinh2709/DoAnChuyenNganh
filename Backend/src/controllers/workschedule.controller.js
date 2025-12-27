@@ -10,7 +10,7 @@ const getAllWorkSchedules = async (req, res, next) => {
   try {
     const { startDate, endDate, maNhanVien } = req.query;
     const where = {};
-    
+
     if (startDate && endDate) {
       where.NgayLamViec = {
         [require('sequelize').Op.between]: [startDate, endDate]
@@ -112,7 +112,7 @@ const updateWorkSchedule = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { NgayLamViec, MaNhanVien, MaCa } = req.body;
-    
+
     const schedule = await LichLamViec.findByPk(id);
     if (!schedule) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy lịch làm việc' });

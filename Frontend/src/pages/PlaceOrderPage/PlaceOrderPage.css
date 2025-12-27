@@ -1,12 +1,37 @@
+/* ✅ CSS Variable cho dễ thay đổi background image */
+:root {
+  --place-order-bg-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop');
+}
+
 .place-order-page {
   min-height: 100vh;
   padding: 40px 20px;
-  background: #f8f9fa;
+  position: relative; /* ✅ Cần để ::before hoạt động */
+  overflow: hidden; /* ✅ Ngăn background tràn ra ngoài */
+}
+
+/* ✅ Blurred Background Layer - Sử dụng ::before */
+.place-order-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--place-order-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px); /* ✅ Làm mờ background */
+  z-index: -1; /* ✅ Đưa ra sau nội dung */
+  opacity: 0.3; /* ✅ Giảm độ đậm để không che khuất nội dung */
 }
 
 .order-container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative; /* ✅ Đảm bảo nội dung nằm trên background */
+  z-index: 1; /* ✅ Nội dung rõ nét */
 }
 
 .order-container h1 {
@@ -87,12 +112,183 @@
   text-align: right;
 }
 
-.cart-total {
+/* ✅ NEW: Promotion & Total Section */
+.cart-total-section {
   padding-top: 20px;
   border-top: 2px solid #e0e0e0;
+}
+
+.cart-total {
   text-align: right;
   font-size: 1.3rem;
   color: #667eea;
+  padding: 15px 0;
+}
+
+.promotion-applied {
+  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+  border: 2px solid #ffa940;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.promotion-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.promotion-badge {
+  background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.remove-promotion-btn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.remove-promotion-btn:hover {
+  background: #cf1322;
+  transform: scale(1.1);
+}
+
+.price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.price-row.discount {
+  color: #ff4d4f;
+  font-weight: 600;
+}
+
+.price-row.total {
+  padding-top: 8px;
+  border-top: 2px solid #ffa940;
+  margin-top: 4px;
+  font-size: 18px;
+  color: #333;
+}
+
+.final-price {
+  color: #52c41a;
+  font-size: 20px;
+}
+
+/* ✅ NEW: Promotion Input Section */
+.promotion-section {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #bae6fd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.promotion-input-wrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.promotion-input-wrapper input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #bae6fd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.promotion-input-wrapper input:focus {
+  border-color: #1890ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+}
+
+.promotion-input-wrapper input.disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.apply-promotion-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.apply-promotion-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4);
+}
+
+.apply-promotion-btn:disabled {
+  background: #52c41a;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.available-promotions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.available-promotions small {
+  color: #666;
+  font-size: 13px;
+}
+
+.promo-code-tag {
+  display: inline-block;
+  background: white;
+  color: #1890ff;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #bae6fd;
+  transition: all 0.3s;
+}
+
+.promo-code-tag:hover {
+  background: #1890ff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
 }
 
 .delivery-form {
@@ -166,6 +362,338 @@
 .empty-cart p {
   color: #666;
   font-size: 1.1rem;
+}
+
+/* ✅ NEW: Payment Methods Styles */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.payment-option {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.payment-option:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.payment-option.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+}
+
+.payment-option input[type="radio"] {
+  display: none;
+}
+
+.payment-option-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.payment-details strong {
+  display: block;
+  font-size: 18px;
+  color: #1a1f3c;
+  margin-bottom: 4px;
+}
+
+.payment-details p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ✅ NEW: QR Modal Styles */
+.qr-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.qr-modal-content {
+  background: white;
+  border-radius: 20px;
+  max-width: 500px; /* Reduced width for better focus */
+  width: 100%;
+  max-height: 90vh;
+  display: flex; /* ✅ Flex layout */
+  flex-direction: column; /* ✅ Vertical stack */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+  position: relative;
+  overflow: hidden; /* ✅ Hide overflow on container */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.qr-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2); /* ✅ Visible on dark header */
+  border: none;
+  color: white; /* ✅ White text */
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20; /* ✅ Above header */
+}
+
+.qr-modal-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: rotate(90deg);
+}
+
+.qr-modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+  text-align: center;
+  color: white;
+  flex-shrink: 0; /* ✅ Don't shrink */
+}
+
+.qr-modal-header h3 {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+  font-weight: 700;
+}
+
+.qr-modal-header .qr-note {
+  font-size: 13px; /* Smaller font */
+  margin: 0;
+  opacity: 0.95;
+  line-height: 1.4;
+}
+
+.qr-modal-header .qr-note strong {
+  color: #fbbf24;
+  text-decoration: underline;
+}
+
+.qr-modal-body {
+  padding: 24px;
+  overflow-y: auto; /* ✅ Scroll THIS part */
+  flex: 1; /* ✅ Expand to fill space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Custom scrollbar for webkit */
+.qr-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.qr-modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.qr-modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.qr-code-wrapper {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.qr-code-img {
+  width: 100%;
+  max-width: 220px; /* ✅ Smaller QR code */
+  height: auto;
+  border-radius: 8px; /* Slightly less rounded */
+}
+
+.bank-info-wrapper {
+  width: 100%;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.bank-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.bank-info-item:last-child {
+  border-bottom: none;
+}
+
+.bank-info-item .label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.bank-info-item .value {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.bank-info-item .value.amount {
+  color: #059669;
+  font-size: 16px;
+}
+
+.bank-info-item.transfer-note {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 1px solid #fcd34d; /* Reset left border style */
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.transfer-code {
+  background: white;
+  color: #dc2626;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  border: 1px dashed #f59e0b;
+  display: inline-block;
+  width: auto; /* Auto width */
+  min-width: 150px;
+  letter-spacing: 0.5px;
+}
+
+.qr-warning-box {
+  width: 100%;
+  background: #fff7ed;
+  border-left: 4px solid #f97316;
+  border-radius: 8px; /* Simple rect with left border */
+  padding: 12px;
+  text-align: left;
+}
+
+.qr-warning-box p {
+  font-size: 13px;
+  color: #9a3412;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qr-modal-footer {
+  padding: 16px 24px 24px 24px; /* Reduced top padding */
+  flex-shrink: 0; /* ✅ Don't shrink */
+  background: white;
+  border-top: 1px solid #f1f5f9; /* Separator */
+}
+
+.qr-modal-confirm-btn {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.qr-modal-confirm-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+}
+
+.qr-modal-confirm-btn:active {
+  transform: translateY(0);
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+  .qr-modal-content {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .qr-modal-header {
+    padding: 24px 20px;
+  }
+
+  .qr-modal-header h3 {
+    font-size: 20px;
+  }
+
+  .qr-modal-body {
+    padding: 24px 20px;
+  }
+
+  .qr-code-img {
+    max-width: 280px;
+  }
+
+  .bank-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .qr-modal-confirm-btn {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
 }
 
 @media (max-width: 968px) {

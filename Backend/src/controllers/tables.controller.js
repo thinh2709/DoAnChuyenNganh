@@ -57,7 +57,7 @@ const updateTable = async (req, res, next) => {
     }
     if (TenBan) table.TenBan = TenBan;
     if (SucChua !== undefined) table.SucChua = parseInt(SucChua);
-    if (TrangThai !== undefined) table.TrangThai = !!TrangThai;
+    if (TrangThai) table.TrangThai = TrangThai; // ✅ Fix: Nhận ENUM string, không convert boolean
     if (SoLuongDatCho !== undefined) table.SoLuongDatCho = parseInt(SoLuongDatCho);
     await table.save();
     return res.json({ success: true, message: 'Cập nhật bàn thành công', data: table });

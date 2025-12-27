@@ -1,0 +1,187 @@
+.menu-section {
+  padding: 100px 20px 80px;
+  background: white;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.menu-section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #1a1f3c;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Category Filter */
+.category-filter {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: 14px 32px;
+  border: 2px solid #ff6b35;
+  background: white;
+  color: #ff6b35;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.category-btn:hover {
+  background: #ff6b35;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.35);
+}
+
+.category-btn.active {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+/* ✅ Grid Layout - Responsive 4 cột trên Desktop lớn */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-bottom: 50px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-items {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #999;
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+}
+
+/* View All Section */
+.view-all-section {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
+}
+
+.view-all-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(255, 107, 53, 0.45);
+}
+
+/* ========== RESPONSIVE - Mobile → Tablet → Laptop → Desktop ========== */
+
+/* Mobile: 1 cột (≤640px) */
+@media (max-width: 640px) {
+  .menu-section {
+    padding: 60px 15px 40px;
+  }
+
+  .menu-section-header {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+  }
+
+  .category-filter {
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .category-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .view-all-btn {
+    padding: 14px 32px;
+    font-size: 1rem;
+  }
+}
+
+/* Tablet: 2 cột (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .menu-section {
+    padding: 80px 20px 60px;
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+/* Laptop nhỏ: 3 cột (1025px - 1439px) */
+@media (min-width: 1025px) and (max-width: 1439px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    max-width: 1200px;
+  }
+}
+
+/* Desktop lớn: 4 cột (≥1440px) */
+@media (min-width: 1440px) {
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1400px;
+  }
+}

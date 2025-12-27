@@ -7,14 +7,18 @@ const router = express.Router();
 const {
   getAllMenu,
   getMenuById,
-  getLoaiMon,
-  getMenuCount,
   createMenu,
   updateMenu,
-  deleteMenu
+  deleteMenu,
+  getBestSellers,
+  getLoaiMon,
+  getMenuCount
 } = require('../controllers/menu.controller');
-const { authenticate, isAdmin, isEmployeeOrAdmin } = require('../middlewares/auth.middleware');
+const { authenticate, isAdmin } = require('../middlewares/auth.middleware');
 const upload = require('../middlewares/upload.middleware');
+
+// ✅ CRITICAL: Đặt best-sellers TRƯỚC route /:id
+router.get('/best-sellers', getBestSellers);
 
 // Public routes
 router.get('/', getAllMenu);

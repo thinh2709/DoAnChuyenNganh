@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Dropdown } from "antd";
-import { FiSearch, FiLogOut } from "react-icons/fi";
+import { FiSearch, FiLogOut, FiChevronDown, FiUser, FiSettings, FiMenu } from "react-icons/fi";
 import { assets } from "../../assets/assets";
 import { toast } from "react-toastify";
 import "./Header.css";
 
-const Header = () => {
+const Header = ({ toggleSidebar }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -24,36 +24,24 @@ const Header = () => {
     // Xóa token và user info
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    
+
     // Hiển thị thông báo
     toast.success("Đăng xuất thành công");
-    
+
     // Redirect về trang login bằng cách reload trang
     window.location.href = "/login";
   };
 
   const userMenuItems = [
     {
-      key: "profile",
-      label: (
-        <div style={{ padding: "4px 0" }}>
-          <div style={{ fontWeight: 500 }}>{user?.HoTen || "Admin"}</div>
-          <div style={{ fontSize: "12px", color: "#8c8c8c" }}>
-            {user?.TenVaiTro || "Administrator"}
-          </div>
-        </div>
-      ),
-      disabled: true,
-    },
-    {
       type: "divider",
     },
     {
       key: "logout",
       label: (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <FiLogOut />
-          <span>Đăng xuất</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "6px 0", color: "#dc2626" }}>
+          <FiLogOut style={{ fontSize: "16px" }} />
+          <span style={{ fontWeight: 600 }}>Đăng xuất</span>
         </div>
       ),
       onClick: handleLogout,
@@ -62,9 +50,13 @@ const Header = () => {
 
   return (
     <header className="admin-header">
-      <div className="header-search">
-        <FiSearch />
-        <input type="text" placeholder="Tìm kiếm báo cáo, đơn hàng, khách hàng..." />
+      <div className="header-left">
+        <button className="mobile-toggle-btn" onClick={toggleSidebar}>
+          <FiMenu size={24} />
+        </button>
+        <div className="header-title">
+          <h1>Techzy Restaurant Admin</h1>
+        </div>
       </div>
 
       <div className="header-actions">
@@ -72,6 +64,7 @@ const Header = () => {
           menu={{ items: userMenuItems }}
           placement="bottomRight"
           trigger={["click"]}
+          overlayClassName="user-dropdown-menu"
         >
           <div className="header-profile" style={{ cursor: "pointer" }}>
             <img
@@ -81,12 +74,13 @@ const Header = () => {
                 e.target.src = "https://via.placeholder.com/40";
               }}
             />
-            <div>
-              <p className="profile-name">{user?.HoTen || "Admin"}</p>
+            <div className="profile-info">
+              <p className="profile-name">{user?.HoTen || "Admin Manager"}</p>
               <span className="profile-role">
                 {user?.TenVaiTro || "Administrator"}
               </span>
             </div>
+            <FiChevronDown className="chevron-icon" />
           </div>
         </Dropdown>
       </div>
