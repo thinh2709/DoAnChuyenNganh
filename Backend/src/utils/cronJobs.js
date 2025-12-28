@@ -11,22 +11,27 @@ const logger = require('./logger');
 /**
  * Cron Job: Tự động cập nhật trạng thái bàn 30 phút trước giờ đặt
  * Chạy mỗi phút để kiểm tra
- * 
- * Lưu ý: TrangThai trong model Ban là BOOLEAN
- * - true = Bàn trống (available)
- * - false = Bàn đã đặt (reserved)
  */
 const updateTableStatusBeforeReservation = cron.schedule('* * * * *', async () => {
     try {
         const now = new Date();
-        const thirtyMinutesLater = new Date(now.getTime() + 30 * 60 * 1000);
+        // ✅ FIX TIMEZONE: Database lưu giờ VN, nhưng khi lấy lên bị -7h
+        // Nên cần cộng 7h vào now để so sánh chính xác
+        const nowAdjusted = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+        const thirtyMinutesLater = new Date(nowAdjusted.getTime() + 30 * 60 * 1000);
 
-        // Tìm các đặt bàn đã xác nhận và sắp đến giờ (trong vòng 30 phút tới)
+        // DEBUG: Log thời gian để kiểm tra
+        logger.info(`⏰ Cron check - Now: ${now.toISOString()} | Adjusted (+7h): ${nowAdjusted.toISOString()} | +30min: ${thirtyMinutesLater.toISOString()}`);
+
+        // Tìm các đặt bàn sắp đến giờ (trong vòng 30 phút tới)
+        // ✅ FIX: Tìm cả 'ChoXacNhan' và 'DaXacNhan'
         const upcomingReservations = await DatBan.findAll({
             where: {
-                TrangThai: 'DaXacNhan',
+                TrangThai: {
+                    [Op.in]: ['ChoXacNhan', 'DaXacNhan']
+                },
                 ThoiGianBatDau: {
-                    [Op.gte]: now,
+                    [Op.gte]: nowAdjusted,
                     [Op.lte]: thirtyMinutesLater
                 }
             },
@@ -34,20 +39,20 @@ const updateTableStatusBeforeReservation = cron.schedule('* * * * *', async () =
                 model: Ban,
                 as: 'ban',
                 where: {
-                    TrangThai: 'TRONG' // true = Bàn trống
-                }
+                    TrangThai: 'TRONG'
+                },
+                required: false
             }]
         });
 
         if (upcomingReservations.length > 0) {
             logger.info(`🕐 Tìm thấy ${upcomingReservations.length} đặt bàn sắp đến giờ`);
 
-            // Update trạng thái bàn
             for (const reservation of upcomingReservations) {
                 const ban = await Ban.findByPk(reservation.MaBan);
 
                 if (ban && ban.TrangThai === 'TRONG') {
-                    await ban.update({ TrangThai: 'DAT_TRUOC' }); // false = Đã đặt
+                    await ban.update({ TrangThai: 'DAT_TRUOC' });
 
                     logger.info(`✅ Đã cập nhật bàn ${ban.TenBan} (${ban.MaBan}) sang trạng thái 'Đã Đặt' cho đặt bàn #${reservation.MaDatBan}`);
                     logger.info(`📅 Thời gian đến: ${reservation.ThoiGianBatDau.toLocaleString('vi-VN')}`);
@@ -61,8 +66,8 @@ const updateTableStatusBeforeReservation = cron.schedule('* * * * *', async () =
         });
     }
 }, {
-    scheduled: false, // Không tự động chạy khi khởi tạo
-    timezone: 'Asia/Ho_Chi_Minh' // Múi giờ Việt Nam
+    scheduled: false,
+    timezone: 'Asia/Ho_Chi_Minh'
 });
 
 /**
@@ -72,21 +77,26 @@ const updateTableStatusBeforeReservation = cron.schedule('* * * * *', async () =
 const releaseTableAfterReservation = cron.schedule('*/5 * * * *', async () => {
     try {
         const now = new Date();
+        // ✅ FIX TIMEZONE: Cộng 7h để match với database
+        const nowAdjusted = new Date(now.getTime() + 7 * 60 * 60 * 1000);
 
         // Tìm các đặt bàn đã hết giờ
         const expiredReservations = await DatBan.findAll({
             where: {
-                TrangThai: 'DaXacNhan',
+                TrangThai: {
+                    [Op.in]: ['ChoXacNhan', 'DaXacNhan']
+                },
                 ThoiGianKetThuc: {
-                    [Op.lt]: now
+                    [Op.lt]: nowAdjusted
                 }
             },
             include: [{
                 model: Ban,
                 as: 'ban',
                 where: {
-                    TrangThai: 'DAT_TRUOC' // false = Đã đặt
-                }
+                    TrangThai: 'DAT_TRUOC'
+                },
+                required: false
             }]
         });
 
@@ -95,12 +105,13 @@ const releaseTableAfterReservation = cron.schedule('*/5 * * * *', async () => {
 
             for (const reservation of expiredReservations) {
                 const ban = await Ban.findByPk(reservation.MaBan);
-
                 if (ban && ban.TrangThai === 'DAT_TRUOC') {
-                    await ban.update({ TrangThai: 'TRONG' }); // true = Trống
-
+                    await ban.update({ TrangThai: 'TRONG' });
                     logger.info(`✅ Đã giải phóng bàn ${ban.TenBan} (${ban.MaBan}) sau đặt bàn #${reservation.MaDatBan}`);
                 }
+
+                await reservation.update({ TrangThai: 'DaHoanThanh' });
+                logger.info(`📋 Đã cập nhật đặt bàn #${reservation.MaDatBan} thành 'Đã hoàn thành'`);
             }
         }
     } catch (error) {

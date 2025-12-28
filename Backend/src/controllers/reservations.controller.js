@@ -406,20 +406,25 @@ const cancelReservation = async (req, res, next) => {
       });
     }
 
-    // Kiểm tra thời gian - không thể hủy đặt bàn đã bắt đầu
-    if (new Date(reservation.ThoiGianBatDau) <= new Date()) {
-      await transaction.rollback();
-      return res.status(400).json({
-        success: false,
-        message: 'Không thể hủy đặt bàn đã bắt đầu'
-      });
-    }
+    // ✅ Xóa liên kết với DonHang (SET NULL)
+    const { DonHang } = require('../models');
+    await DonHang.update(
+      { MaDatBan: null },
+      { where: { MaDatBan: id }, transaction }
+    );
 
     // Xóa các món ăn liên quan
     await DatBanMonAn.destroy({
       where: { MaDatBan: id },
       transaction
     });
+
+    // ✅ Giải phóng bàn nếu đang ở trạng thái DAT_TRUOC
+    const ban = await Ban.findByPk(reservation.MaBan, { transaction });
+    if (ban && ban.TrangThai === 'DAT_TRUOC') {
+      await ban.update({ TrangThai: 'TRONG' }, { transaction });
+      logger.info(`Đã giải phóng bàn ${ban.TenBan} khi xóa đặt bàn #${id}`);
+    }
 
     // Xóa đặt bàn
     await reservation.destroy({ transaction });

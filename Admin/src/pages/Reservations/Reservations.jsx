@@ -186,20 +186,18 @@ const Reservations = () => {
   const formatDateTime = (dateString) => {
     if (!dateString) return "-";
     try {
-      // Nếu dateString không có 'Z' hoặc timezone, parse như local time
-      if (!dateString.includes('Z') && !dateString.includes('+') && !dateString.includes('-', 10)) {
-        // Parse thủ công để đảm bảo là local time
-        const [datePart, timePart] = dateString.split('T');
-        if (datePart && timePart) {
-          const [year, month, day] = datePart.split('-').map(Number);
-          const [hour, minute, second] = timePart.split(':').map(Number);
-          const date = new Date(year, month - 1, day, hour, minute, second || 0);
-          return format(date, "HH:mm dd/MM/yyyy", { locale: vi });
-        }
+      // Parse thời gian từ server
+      const date = new Date(dateString);
+
+      // Kiểm tra date hợp lệ
+      if (isNaN(date.getTime())) {
+        return "-";
       }
 
-      // Nếu có timezone info, parse bình thường
-      const date = new Date(dateString);
+      // ✅ FIX: Trừ 7 giờ để hiển thị đúng giờ VN
+      // (Do server trả về thời gian đã bị cộng thêm 7 giờ)
+      date.setHours(date.getHours() - 7);
+
       return format(date, "HH:mm dd/MM/yyyy", { locale: vi });
     } catch (error) {
       console.error('❌ formatDateTime error:', error);
